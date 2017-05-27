@@ -8,7 +8,7 @@ Setup of Django environment
 	$virtualenv -p python3 myvenv
 4. Activate virtualenv for the project\
 	$source myvenv/bin/activate
-4. Install Django\
+5. Install Django\
     $pip install django
 6. Create the project\
 	$django-admin startproject UPitt_activity_finder
