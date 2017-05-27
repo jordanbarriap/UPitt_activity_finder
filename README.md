@@ -2,13 +2,13 @@
 
 Setup of Django environment
 1. Install Python3
-2. Install virtualenv:
+2. Install virtualenv\
 	$pip3 install virtualenv
-3. Create virtualenv for the project:/ \
+3. Create virtualenv for the project\
 	$virtualenv -p python3 myvenv
-4. Activate virtualenv for the project:
+4. Activate virtualenv for the project\
 	$source myvenv/bin/activate
-5. Create the project:
+5. Create the project\
 	$django-admin startproject UPitt_activity_finder
-6. Install mysqlclient (library for connecting to MySQL):
+6. Install mysqlclient (library for connecting to MySQL)\
 	$pip install mysqlclient
