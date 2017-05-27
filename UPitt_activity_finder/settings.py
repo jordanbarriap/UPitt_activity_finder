@@ -78,9 +78,9 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'reader_project',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': 'UPitt_activity_finder_db',
+        'USER': 'developer',
+        'PASSWORD': 'upittpaws',
         'HOST': 'localhost',
         'PORT': '3306'
 
