@@ -1,0 +1,26 @@
+Django framework for backend and for administrators-> Search for information about admin template extension
+	MySQL database
+	Client: javascript+jQuery (bootstrap for style)
+
+
+	Tables:
+	Activity -> id, name, description, current_happening, start_date, end_date, output/outcomes, school (many), departments (many),
+	Community partner -> id, name, address, contact name, contact email (it can be multiple)
+	Population-> id, name (mandatory)
+	Focus area -> id, name (mandatory), reviewed
+	Activity type -> id, name
+	School->id, (are they optional?)
+	Department->id, (are they optional?)
+	Course->code, name
+	Location -> id, name, optional address(?)
+	Leader->first name, last name, type
+	Served people neighbourhood
+
+
+	Questions:
+	1. What is the limit for schools, departments, courses and contact information  (i.e., 2 schools per each activity)?
+	2. What is "unit notes"? (I think unit is refering to department)
+	4. What is the difference between Location and "Neighborhood of who is served"?
+	5. Is contact information associated with the whole activity, or with a community partner?
+	6. Is it needed to create a separate table for contact, or the contact is an arbitrary information depending on each activity?
+	7. About the queries you sent us, is the place equals to location in the excel file?
