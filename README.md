@@ -12,3 +12,5 @@ Setup of Django environment
 	$django-admin startproject UPitt_activity_finder
 6. Install mysqlclient (library for connecting to MySQL)\
 	$pip install mysqlclient
+7. Check if server runs\
+    $django-admin runserver
