@@ -15,4 +15,4 @@ Setup of Django environment
 7. Install mysqlclient (library for connecting to MySQL)\
 	$pip install mysqlclient
 8. Check if server runs\
-    $django-admin runserver
+    $python manage.py runserver 127.0.0.1:8000
