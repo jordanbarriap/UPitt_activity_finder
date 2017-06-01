@@ -13,7 +13,7 @@ Django framework for backend and for administrators-> Search for information abo
 	Department->id, name (are they optional?)
 	Course->code, name
 	Location -> id, name, optional address(?)
-	Leader->first name, last name, type
+	People (including leaders and contact person)->first name, last name, email, type
 	Served people neighbourhood
 
 
