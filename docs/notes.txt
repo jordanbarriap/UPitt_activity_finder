@@ -4,7 +4,7 @@ Django framework for backend and for administrators-> Search for information abo
 
 
 	Tables:
-	Activity -> id, name, description, current_happening, start_date, end_date, output/outcomes, school (many), departments (many),
+	Activity -> id, name, description, current_happening, start_date, end_date, output/outcomes, school (many), departments (many), funding
 	Community partner -> id, name, address, contact name, contact email (it can be multiple)
 	Population-> id, name (mandatory)
 	Focus area -> id, name (mandatory), reviewed
