@@ -9,8 +9,8 @@ Django framework for backend and for administrators-> Search for information abo
 	Population-> id, name (mandatory)
 	Focus area -> id, name (mandatory), reviewed
 	Activity type -> id, name
-	School->id, (are they optional?)
-	Department->id, (are they optional?)
+	School->id, name (are they optional?)
+	Department->id, name (are they optional?)
 	Course->code, name
 	Location -> id, name, optional address(?)
 	Leader->first name, last name, type
