@@ -8,6 +8,7 @@ Setup of Django environment
 	$virtualenv -p python3 myvenv
 4. Activate virtualenv for the project\
 	$source myvenv/bin/activate
+	Deactivate: $deactivate
 5. Install Django\
     $pip install django
 6. Create the project\
