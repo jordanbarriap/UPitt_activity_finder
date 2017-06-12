@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import date
 
 class ActivityType(models.Model):
     idActivityType = models.AutoField(primary_key=True)
@@ -102,8 +102,8 @@ class Activity(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
     happening = models.BooleanField()
-    start_date = models.DateField()
-    end_date = models.DateField(blank=True,default='')
+    start_date = models.DateField(default=date.today)
+    end_date = models.DateField(blank=True, null=True)
     outcomes = models.CharField(max_length=2000)
     funding = models.CharField(max_length=500)
     reviewed = models.CharField(max_length=100)
