@@ -39,3 +39,4 @@ Django framework for backend and for administrators-> Search for information abo
 Need to be fixed:
 1. Datatype of "name": VARCHAR(300)
 2. Datatype of "description": VARCHAR(2000)
+3. The textfield of "Description", "Outcomes" should be larger and allow multiple lines
