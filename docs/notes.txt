@@ -35,3 +35,7 @@ Django framework for backend and for administrators-> Search for information abo
 	
 	6. About the queries you sent us, is the place equals to the location in the excel file?
 	a. Yes. Please = Location, which we will need up to 10 per activity. 
+	
+Need to be fixed:
+1. Datatype of "name": VARCHAR(300)
+2. Datatype of "description": VARCHAR(2000)
