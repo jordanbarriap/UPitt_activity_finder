@@ -13,4 +13,3 @@ admin.site.register(Population)
 admin.site.register(ServedNeighbourhood)
 admin.site.register(School)
 admin.site.register(Unit)
-
