@@ -124,6 +124,7 @@ class Activity(models.Model):
     courses = models.ManyToManyField(Course, related_name="associated_course")
     #idCommunityPartner = models.ForeignKey(CommunityPartner, on_delete=models.CASCADE, null = True)
     communityPartners = models.ManyToManyField(CommunityPartner, related_name="associated_community_partner")
+    contactInformation= models.BooleanField()
 
     def __str__(self):
         return self.name
