@@ -1,1 +1,10 @@
-#mapid { height: 180px; }
+#map {
+    width: 50%;
+    height: 100%;
+    float: right;
+}
+#acts-table{
+    width: 50%;
+    height: 100%;
+    float: left;
+}
