@@ -1,10 +1,27 @@
-<!DOCTYPE html>
+{% load static %}
+<html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>University of Pittsburgh</title>
+
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+   integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+   crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+   integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+   crossorigin=""></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "css/activity_finder.css" %}" />
+
+
+
 </head>
 <body>
-
+     <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+    </script>
 </body>
 </html>
