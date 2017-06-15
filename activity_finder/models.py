@@ -100,15 +100,16 @@ class Activity(models.Model):
     idActivity = models.AutoField(primary_key=True)
     idActivityType = models.ForeignKey(ActivityType, on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
-    description = models.CharField(max_length=2000)
+    description = models.TextField(max_length=2000)
     happening = models.BooleanField()
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(blank=True, null=True)
-    outcomes = models.CharField(max_length=2000)
+    outcomes = models.TextField(max_length=2000)
     funding = models.CharField(max_length=500)
     reviewed = models.CharField(max_length=100)
     unitNotes = models.CharField(max_length=500)
     idPeople = models.ForeignKey(People, on_delete=models.CASCADE,related_name="in_charge_person", null = True)
+    contactInformation= models.BooleanField()
     universityLeaders = models.ManyToManyField(People,related_name="university_leader")
     #idFocusArea = models.ForeignKey(FocusArea, on_delete=models.CASCADE, null = True)
     focusAreas = models.ManyToManyField(FocusArea, related_name="associated_focus_area")
@@ -124,7 +125,6 @@ class Activity(models.Model):
     courses = models.ManyToManyField(Course, related_name="associated_course")
     #idCommunityPartner = models.ForeignKey(CommunityPartner, on_delete=models.CASCADE, null = True)
     communityPartners = models.ManyToManyField(CommunityPartner, related_name="associated_community_partner")
-    contactInformation= models.BooleanField()
 
     def __str__(self):
         return self.name
