@@ -41,3 +41,8 @@ CREATE A NEW APP
 - python manage.py startapp [name_of_the_app]
 - Edit urls.python
 - Add view
+
+
+NOTES:
+1. Need to change the size (longer) of the charfield (textbox)
+2. Try to change the logo of the page
