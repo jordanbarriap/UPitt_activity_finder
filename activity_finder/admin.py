@@ -17,6 +17,11 @@ admin.site.register(ServedNeighbourhood)
 admin.site.register(School)
 admin.site.register(Unit)
 
+#header
+admin.site.site_header = 'Pitt Activity Finder administration'
+admin.site.site_title = 'Pitt side admin'
+admin.site.index_title = 'Pitt side administration'
+
 class ActivityModelAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size':''})},

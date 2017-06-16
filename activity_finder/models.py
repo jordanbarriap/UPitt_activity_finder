@@ -104,10 +104,9 @@ class Activity(models.Model):
     happening = models.BooleanField()
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(blank=True, null=True)
-    outcomes = models.TextField(max_length=2000)
-    funding = models.CharField(max_length=500)
-    reviewed = models.CharField(max_length=100)
-    unitNotes = models.CharField(max_length=500)
+    outcomes = models.TextField(max_length=2000, blank=True, null=True)
+    funding = models.CharField(max_length=500, blank=True, null=True)
+    unitNotes = models.CharField(max_length=500, blank=True, null=True)
     idPeople = models.ForeignKey(People, on_delete=models.CASCADE,related_name="in_charge_person", null = True)
     contactInformation= models.BooleanField()
     universityLeaders = models.ManyToManyField(People,related_name="university_leader")
@@ -125,6 +124,7 @@ class Activity(models.Model):
     courses = models.ManyToManyField(Course, related_name="associated_course")
     #idCommunityPartner = models.ForeignKey(CommunityPartner, on_delete=models.CASCADE, null = True)
     communityPartners = models.ManyToManyField(CommunityPartner, related_name="associated_community_partner")
+    reviewed = models.CharField(max_length=100,blank=True, null=True)
 
     def __str__(self):
         return self.name
