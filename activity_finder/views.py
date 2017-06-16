@@ -6,4 +6,4 @@ from activity_finder.models import Activity
 
 def activity_finder(request):
     activities=Activity.objects.all()
-    return render(request, 'index.html', {})
+    return render(request, 'index.html', {'activities':activities})

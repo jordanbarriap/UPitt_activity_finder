@@ -5,6 +5,15 @@
     <title>Reports</title>
 </head>
 <body>
-Hung is sleepy
+<span>Choose the data you want to report:</span>
+<form method="POST">
+<select name="entities-cb">
+{% for entity in entities %}
+    <option value="{{ entity }}">{{ entity }}</option>
+{% endfor %}
+</select>
+</form>
+<p>
+</p>
 </body>
 </html>
