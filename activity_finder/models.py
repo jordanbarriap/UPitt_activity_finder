@@ -99,7 +99,7 @@ class CommunityPartner(models.Model):
 class Activity(models.Model):
     idActivity = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300)
-    idActivityType = models.ForeignKey(ActivityType, on_delete=models.CASCADE)  
+    idActivityType = models.ForeignKey(ActivityType, blank=True, null=True, on_delete=models.CASCADE)
     description = models.TextField(max_length=2000)
     happening = models.BooleanField()
     start_date = models.DateField(default=date.today)
