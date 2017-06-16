@@ -32,7 +32,7 @@ class FocusArea(models.Model):
 class Location(models.Model):
     idLocation = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
+    address = models.CharField(max_length=200, blank=True, null=True)
     #activities = models.ManyToManyField(Activity)
 
     def __str__(self):
