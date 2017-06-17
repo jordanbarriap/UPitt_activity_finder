@@ -3,17 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Reports</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 <span>Choose the data you want to report:</span>
 <form method="POST">
 <select name="entities-cb">
-{% for entity in entities %}
-    <option value="{{ entity }}">{{ entity }}</option>
-{% endfor %}
+    {% for entity in entities %}
+        <option value="{{ entity }}">{{ entity }}</option>
+    {% endfor %}
 </select>
 </form>
-<p>
-</p>
+
+<button id="add-filter-btn" class="btn btn-info btn-lg">
+    <span class="glyphicon glyphicon-plus-sign"></span> Add filter
+</button>
+<div id="filters-div">
+
+</div>
+
+<script>
+    $("#add-filter-btn").click(function(){
+        $("#filters-div").append("<select></select>");
+    });
+</script>
 </body>
 </html>
