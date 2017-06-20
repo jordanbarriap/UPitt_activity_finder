@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% load static %}
+<html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,28 +7,108 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!--<link type="text/css" rel="stylesheet" href="{% static "js/jsgrid-1.5.3/jsgrid.min.css" %}" />
+    <link type="text/css" rel="stylesheet" href="{% static "js/jsgrid-1.5.3/jsgrid-theme.min.css" %}" />
+    <script type="text/javascript" src="{% static "js/jsgrid-1.5.3/jsgrid.min.js" %}"></script>-->
+
+    <link rel="stylesheet" type="text/css" href="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.css" %}">
+    <script src="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.js" %}"></script>
+
+
+
 </head>
 <body>
 <span>Choose the data you want to report:</span>
-<form method="POST">
-<select name="entities-cb">
+
+<select id="entities-cb">
     {% for entity in entities %}
         <option value="{{ entity }}">{{ entity }}</option>
     {% endfor %}
 </select>
-</form>
 
+</br>
 <button id="add-filter-btn" class="btn btn-info btn-lg">
     <span class="glyphicon glyphicon-plus-sign"></span> Add filter
 </button>
 <div id="filters-div">
 
 </div>
+<div id="gridbox" style="width:100%;height:400px;"></div>
 
 <script>
-    $("#add-filter-btn").click(function(){
-        $("#filters-div").append("<select></select>");
+    var selected_entity = $('#entities-cb :selected').text();
+    console.log(selected_entity)
+
+    var selected_field;
+    var selected_field_type;
+    var filters;
+
+    var current_filter=1;
+
+    var mygrid = new dhtmlXGridObject('gridbox');
+
+    //the path to images required by grid
+    //mygrid.setImagePath("./codebase/imgs/");
+
+
+    $("select#entities-cb").change(function(){
+
+       selected_entity = $('#entities-cb :selected').text();
+
+       /*var jqxhr = $.get( "/reports/get_filters", function(data) {
+          filters = data.filters;
+          console.log(filters);*/
+       var jqxhr = $.get( "/reports/get_table", {'entity': selected_entity}, function(data) {
+          var header = data.columns.join();
+          mygrid.clearAll(true);
+          //mygrid.setHeader("Sales,Book title,Author,Price");//the headers of columns
+          mygrid.setHeader(header);//the headers of columns
+          //mygrid.setInitWidths("100,250,150,100");          //the widths of columns
+          //mygrid.setColAlign("right,left,left,left");       //the alignment of columns
+          //mygrid.setColTypes("ro,ed,ed,ed");                //the types of columns
+          //mygrid.setColSorting("int,str,str,int");          //the sorting types
+          mygrid.setColSorting(data.types.join());          //the sorting types
+          mygrid.init();      //finishes initialization and renders the grid on the page
+          mygrid.parse(data.data,"json"); //takes the name and format of the data source
+          console.log(data);
+        })
+          .fail(function() {
+            alert( "error" );
+          });
     });
+    $("#add-filter-btn").click(function(){
+
+        selected_entity = $('#entities-cb :selected').text();
+
+        $("#filters-div").append("<select class='filter' id='filter"+current_filter+"'></select>");
+
+        for(var i=0; i<filters.length; i++){
+            $("#filter"+current_filter).append("<option value='"+filters[i]+"'>"+filters[i]+"</option>");
+        }
+
+        $("#filter"+current_filter).change(function(){
+            selected_field = this.value;
+            var jqxhr = $.get( "/reports/get_subfilters", { entity: selected_entity, field: selected_field, field_type: selected_field_type }, function(data) {
+              var fields = data.fields;
+              console.log(fields);
+              $("#filter"+current_filter).prop('disabled', 'disabled');
+            })
+              .fail(function() {
+                alert( "error" );
+              })
+              .always(function() {
+                alert( "finished" );
+              });
+    });
+
+        current_filter++;
+
+    });
+
+
+
+
 </script>
 </body>
 </html>
