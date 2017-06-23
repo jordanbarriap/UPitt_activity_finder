@@ -126,6 +126,7 @@ def get_subtable(request):
 
             for ent2 in queryset2:
                 entity2_lowercase = entity2.lower()
+
                 queryset3 = getattr(ent2, entity2_lowercase+"s").all()
 
                 for ent3 in queryset3:
