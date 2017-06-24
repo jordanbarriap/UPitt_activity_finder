@@ -115,27 +115,32 @@ def get_subtable(request):
         entity_model1 = apps.get_model(app_label='activity_finder', model_name=entity1)
         entity_model2 = apps.get_model(app_label='activity_finder', model_name=entity2)
 
+
+
         queryset1 = entity_model1.objects.all()#objects.all().prefetch_related('activity_set')
 
         queryvalues = []
         queryset1_values = entity_model1.objects.all().values()#[entry for entry in queryset1]
+        entity2_lowercase = entity2.lower()
 
         for ent1 in queryset1:
-            queryset2 = ent1.activity_set.all()
-            ent1_values = queryset1_values[ent1_count]
+            if Activity._meta.get_field(entity2_lowercase):
+                queryset2 = ent1.activity_set.all()
+                ent1_values = queryset1_values[ent1_count]
 
-            for ent2 in queryset2:
-                entity2_lowercase = entity2.lower()
 
-                queryset3 = getattr(ent2, entity2_lowercase+"s").all()
+                for ent2 in queryset2:
+                    queryset3 = getattr(ent2, entity2_lowercase+"s").all()
 
-                for ent3 in queryset3:
+                    for ent3 in queryset3:
 
-                    rows.append(copy.copy(ent1_values))
-                    rows[row][entity2]=str(ent3)
-                    #print(rows[row])
-                    row = row + 1
-            ent1_count = ent1_count + 1
+                        rows.append(copy.copy(ent1_values))
+                        rows[row][entity2]=str(ent3)
+
+                        row = row + 1
+                ent1_count = ent1_count + 1
+            else:#it could be foreign key
+                print("foreign key")
 
     print(rows)
     query_values = [entry for entry in rows]
