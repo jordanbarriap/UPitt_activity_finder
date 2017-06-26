@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="65e33904-aa01-4db2-bc7c-bea1728349cc" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/activity_finder/models.py" afterPath="$PROJECT_DIR$/activity_finder/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/templates/reports.html" afterPath="$PROJECT_DIR$/reports/templates/reports.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/views.py" afterPath="$PROJECT_DIR$/reports/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,8 +21,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/activity_finder/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="114" column="45" lean-forward="true" selection-start-line="114" selection-start-column="45" selection-end-line="114" selection-end-column="45" />
+            <state relative-caret-position="209">
+              <caret line="113" column="27" lean-forward="true" selection-start-line="113" selection-start-column="27" selection-end-line="113" selection-end-column="27" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -57,8 +57,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/reports/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="227">
-              <caret line="131" column="38" lean-forward="true" selection-start-line="131" selection-start-column="38" selection-end-line="131" selection-end-column="38" />
+            <state relative-caret-position="2985">
+              <caret line="213" column="9" lean-forward="false" selection-start-line="213" selection-start-column="9" selection-end-line="213" selection-end-column="9" />
               <folding>
                 <element signature="e#26#61#0" expanded="true" />
               </folding>
@@ -69,8 +69,8 @@
       <file leaf-file-name="reports.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reports/templates/reports.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-621">
-              <caret line="68" column="30" lean-forward="false" selection-start-line="68" selection-start-column="30" selection-end-line="68" selection-end-column="30" />
+            <state relative-caret-position="1560">
+              <caret line="115" column="32" lean-forward="false" selection-start-line="115" selection-start-column="32" selection-end-line="115" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -92,9 +92,9 @@
       <find>setheader</find>
       <find>text_filter</find>
       <find>final_queryset</find>
-      <find>filters.</find>
       <find>auto_</find>
       <find>field</find>
+      <find>filters.</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -114,8 +114,8 @@
         <option value="$PROJECT_DIR$/UPitt_activity_finder/settings.py" />
         <option value="$PROJECT_DIR$/activity_finder/views.py" />
         <option value="$PROJECT_DIR$/reports/urls.py" />
-        <option value="$PROJECT_DIR$/reports/templates/reports.html" />
         <option value="$PROJECT_DIR$/activity_finder/models.py" />
+        <option value="$PROJECT_DIR$/reports/templates/reports.html" />
         <option value="$PROJECT_DIR$/reports/views.py" />
       </list>
     </option>
@@ -819,11 +819,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reports/templates/reports.html">
+    <entry file="file://$PROJECT_DIR$/activity_finder/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-621">
-          <caret line="68" column="30" lean-forward="false" selection-start-line="68" selection-start-column="30" selection-end-line="68" selection-end-column="30" />
-          <folding />
+        <state relative-caret-position="209">
+          <caret line="113" column="27" lean-forward="true" selection-start-line="113" selection-start-column="27" selection-end-line="113" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -847,20 +849,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/activity_finder/models.py">
+    <entry file="file://$PROJECT_DIR$/reports/templates/reports.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="114" column="45" lean-forward="true" selection-start-line="114" selection-start-column="45" selection-end-line="114" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1560">
+          <caret line="115" column="32" lean-forward="false" selection-start-line="115" selection-start-column="32" selection-end-line="115" selection-end-column="32" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/reports/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="131" column="38" lean-forward="true" selection-start-line="131" selection-start-column="38" selection-end-line="131" selection-end-column="38" />
+        <state relative-caret-position="2985">
+          <caret line="213" column="9" lean-forward="false" selection-start-line="213" selection-start-column="9" selection-end-line="213" selection-end-column="9" />
           <folding>
             <element signature="e#26#61#0" expanded="true" />
           </folding>

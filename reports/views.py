@@ -98,11 +98,16 @@ def get_subfilters(request):
     return JsonResponse(data)
 
 def get_subtable(request):
-    entity1 = request.GET.get('entity1', None)
-    entity2 = request.GET.get('entity2', None)
+    num_entities = int(request.GET.get('num_entities', None))
+    entities = []
+    for i in range(0,num_entities):
+        ent = 'entity' + str(i+1)
+        entity = request.GET.get(ent, None)
+        entities.append(entity)
+    #entity1 = request.GET.get('entity1', None)
+    #entity2 = request.GET.get('entity2', None)
 
     data=[]
-    queryset1=[]
     query_values = []
     data_types = []
     data_filters = []
@@ -111,40 +116,102 @@ def get_subtable(request):
     row = 0
     ent1_count=0
     rows = []
-    if entity1!=entity2:
-        entity_model1 = apps.get_model(app_label='activity_finder', model_name=entity1)
-        entity_model2 = apps.get_model(app_label='activity_finder', model_name=entity2)
 
+    entity_models = []
+    for i in range(0,num_entities):
+        print(entities[i])
+        entity_model = apps.get_model(app_label='activity_finder', model_name=entities[i])
+        entity_models.append(entity_model)
 
+    #entity_model1 = apps.get_model(app_label='activity_finder', model_name=entity1)
+    #entity_model2 = apps.get_model(app_label='activity_finder', model_name=entity2)
 
-        queryset1 = entity_model1.objects.all()#objects.all().prefetch_related('activity_set')
+    rel_type_entities = [] #f: foreignkey, m: manytomany, n: is not a relationship
+    for i in range(0,num_entities):
+        rel_type_entities.append("n")
+    #Check if entity1 is foreignkey or manytomany field in the table Activity
+    act_fields = [field for field in Activity._meta.get_fields()]
+    for act_field in act_fields:
+        print(act_field)
+        if act_field.is_relation:
+            print(act_field.related_model.__name__)
+            print("is relation")
+            for i in range(0,num_entities):
+                if act_field.related_model.__name__==entities[i]:
+                    print(act_field.related_model.__name__)
+                    if act_field.many_to_one:
+                        rel_type_entities[i]='f'
+                    else:
+                        if act_field.many_to_many:
+                            rel_type_entities[i]='m'
+    print(rel_type_entities)
+    querysets = []
+    queryset_values = []
+    querysets.append(entity_models[0].objects.all())#objects.all().prefetch_related('activity_set')
+    queryvalues = []
+    queryset_values.append(entity_models[0].objects.all().values())#[entry for entry in queryset1]
 
-        queryvalues = []
-        queryset1_values = entity_model1.objects.all().values()#[entry for entry in queryset1]
-        entity2_lowercase = entity2.lower()
+    entity2_lowercase = entities[1].lower()
 
-        for ent1 in queryset1:
-            if Activity._meta.get_field(entity2_lowercase):
-                queryset2 = ent1.activity_set.all()
-                ent1_values = queryset1_values[ent1_count]
+    if rel_type_entities[0] == 'm':
+        for ent1 in querysets[0]:
+            #querysets.append(ent1.activity_set.all())
+            fields=[]
+            for i in range (1,num_entities):
+                if(rel_type_entities[i]=="m"):
+                    fields.append(entities[i].lower()+"s__name")
+                if(rel_type_entities[i]=="f"):
+                    fields.append(entities[i].lower() + "__name")
+            final_query_values=ent1.activity_set.all().values(*fields)
+            for result in final_query_values:
+                print(result)
+                print("******")
+                rows.append(copy.copy(queryset_values[0][ent1_count]))
+                for field in result.keys():
+                    rows[row][field]=result[field]
+                row = row + 1
+            print("#######")
+            ent1_count = ent1_count + 1
+            #ent1_values = queryset_values[1][ent1_count]
 
+    '''        for ent2 in querysets[1]:
+                for i in range (1,num_entities):
+                    if rel_type_entities[entities[i]] == 'm':
+                        querysets[i] = getattr(ent2, entity2_lowercase+"s").all()
 
-                for ent2 in queryset2:
-                    queryset3 = getattr(ent2, entity2_lowercase+"s").all()
+                        for ent3 in queryset3:
 
-                    for ent3 in queryset3:
+                            rows.append(copy.copy(ent1_values))
+                            rows[row][entities[1]]=str(ent3)
+                            row = row + 1
+                    else:
 
-                        rows.append(copy.copy(ent1_values))
-                        rows[row][entity2]=str(ent3)
+            ent1_count = ent1_count + 1
+    else:#it could be foreign key
+        if rel_type_entities=='f':
+            for ent1 in querysets[0]:
+                for i in range(1, num_entities):
+                    querysets[current_ent] = ent1.activity_set.all()
+                    ent1_values = queryset_values[0][ent1_count]
 
-                        row = row + 1
-                ent1_count = ent1_count + 1
-            else:#it could be foreign key
-                print("foreign key")
+                    for ent2 in queryset2:
+                        queryset3 = getattr(ent2, entity2_lowercase + "s").all()
+
+                        for ent3 in queryset3:
+                            rows.append(copy.copy(ent1_values))
+                            rows[row][entity2] = str(ent3)
+
+                            row = row + 1
+                    ent1_count = ent1_count + 1'''
 
     print(rows)
+    print("$$$$$$$$")
     query_values = [entry for entry in rows]
     for value in query_values:
+        print(value)
+        print("%%%%%%")
+        #value = [entry for entry in value]
+        #print(value)
         if len(columns)==0:
             columns = list(value.keys())
             for column in columns:

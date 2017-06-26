@@ -59,6 +59,7 @@
        /*var jqxhr = $.get( "/reports/get_filters", function(data) {
           filters = data.filters;
           console.log(filters);*/
+
        var jqxhr = $.get( "/reports/get_table", {'entity': selected_entity}, function(data) {
           var header = data.columns.join();
           mygrid.clearAll(true);
@@ -93,31 +94,46 @@
         }
 
         $("#filter"+current_filter).change(function(){
+            var parameters = {};
+            parameters["entity1"]=selected_entity
+            var n_ent = 2
+            $('.filter  option:selected').each(function() {
+                if($(this).text()!=""){
+                    parameters["entity"+n_ent] = $(this).text();
+                    n_ent = n_ent + 1;
+                }
+            });
+
+            parameters["num_entities"]=Object.keys(parameters).length;
+            console.log(parameters);
             selected_filter = this.value;
             //selected_field = this.value;
             mygrid.clearAll(true);
             mygrid=new dhtmlXGridObject('gridbox');
-            var jqxhr = $.get( "/reports/get_subtable", { entity1: selected_entity,  entity2: selected_filter}, function(new_data) {
 
-              var new_header = new_data.columns.join();
-              console.log(new_header)
+            $.ajax({url: "/reports/get_subtable",
+                type: "get",
+                data: parameters,
+                success: function (new_data) {
+                  var new_header = new_data.columns.join();
+                  console.log(new_header)
 
-              //mygrid.setHeader("Sales,Book title,Author,Price");//the headers of columns
-              mygrid.setHeader(new_header);//the headers of columns
-              var new_filter = new_data.filters.join();
-              mygrid.attachHeader(new_filter);
-              //mygrid.setInitWidths("100,250,150,100");          //the widths of columns
-              //mygrid.setColAlign("right,left,left,left");       //the alignment of columns
-              //mygrid.setColTypes("ro,ed,ed,ed");                //the types of columns
-              //mygrid.setColSorting("int,str,str,int");          //the sorting types
-              mygrid.setColSorting(new_data.types.join());          //the sorting types
-              mygrid.init();      //finishes initialization and renders the grid on the page
-              mygrid.parse(new_data.data,"json"); //takes the name and format of the data source
-              console.log(new_data.data);
-            })
-              .fail(function() {
-                alert( "error" );
-              })
+                  //mygrid.setHeader("Sales,Book title,Author,Price");//the headers of columns
+                  mygrid.setHeader(new_header);//the headers of columns
+                  var new_filter = new_data.filters.join();
+                  mygrid.attachHeader(new_filter);
+                  //mygrid.setInitWidths("100,250,150,100");          //the widths of columns
+                  //mygrid.setColAlign("right,left,left,left");       //the alignment of columns
+                  //mygrid.setColTypes("ro,ed,ed,ed");                //the types of columns
+                  //mygrid.setColSorting("int,str,str,int");          //the sorting types
+                  mygrid.setColSorting(new_data.types.join());          //the sorting types
+                  mygrid.init();      //finishes initialization and renders the grid on the page
+                  mygrid.parse(new_data.data,"json"); //takes the name and format of the data source
+                  console.log(new_data.data);
+                }
+            });
+
+
             current_filter++;
 
         });
