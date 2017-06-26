@@ -17,11 +17,7 @@ class People(models.Model):
     type = models.CharField(max_length=45)
 
     def __str__(self):
-        return self.first_name+" "+self.last_name
-
-    @property
-    def name(self):
-        return self.first_name+" "+self.last_name
+        return self.first_name + " " + self.last_name
 
 
 class FocusArea(models.Model):
@@ -54,7 +50,7 @@ class School(models.Model):
 class Unit(models.Model):
     idUnit = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    idSchool = models.ForeignKey(School, on_delete=models.CASCADE)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     #activities = models.ManyToManyField(Activity)
 
     def __str__(self):
@@ -111,7 +107,7 @@ class Activity(models.Model):
     outcomes = models.TextField(max_length=2000, blank=True, null=True)
     funding = models.CharField(max_length=500, blank=True, null=True)
     unitNotes = models.CharField(max_length=500, blank=True, null=True)
-    people = models.ForeignKey(People, on_delete=models.CASCADE,related_name="in_charge_person", null = True)
+    people = models.ForeignKey(People, on_delete=models.CASCADE, related_name="people_in_charge", null = True)
     contactInformation= models.BooleanField()
     universityleaders = models.ManyToManyField(People)#,related_name="associated_university_leader")
     #idFocusArea = models.ForeignKey(FocusArea, on_delete=models.CASCADE, null = True)

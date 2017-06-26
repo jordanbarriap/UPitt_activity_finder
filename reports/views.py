@@ -42,7 +42,31 @@ def get_filters(request):
 def get_table(request):
     entity = request.GET.get('entity', None)
     entity_model = apps.get_model(app_label='activity_finder', model_name=entity)
-    query_set = entity_model.objects.values()
+    fields = []
+    for field in entity_model._meta.get_fields():
+        if type(field).__name__ != "AutoField":
+            if field.is_relation:
+                if field.many_to_one:
+                    if field.related_model.__name__!="Activity":
+                        if field.related_model.__name__=="People":
+                            fields.append(field.name+"_id__first_name")
+                            fields.append(field.name+"_id__last_name")
+                        else:
+                            fields.append(field.name + "_id__name")
+                else:
+                    if field.many_to_many:
+                        if field.related_model.__name__ != "Activity":
+                            if field.related_model.__name__=="People":
+                                fields.append(field.name+"__first_name")
+                                fields.append(field.name+"__last_name")
+                            else:
+                                fields.append(field.name + "__name")
+            else:
+                fields.append(field.name)
+
+    print(fields)
+    query_set = entity_model.objects.values(*fields)
+
     query_values = [entry for entry in query_set]
     json_data = []
     columns = []
@@ -132,7 +156,7 @@ def get_subtable(request):
     #Check if entity1 is foreignkey or manytomany field in the table Activity
     act_fields = [field for field in Activity._meta.get_fields()]
     for act_field in act_fields:
-        print(act_field)
+        #print(act_field)
         if act_field.is_relation:
             print(act_field.related_model.__name__)
             print("is relation")
@@ -147,11 +171,39 @@ def get_subtable(request):
     print(rel_type_entities)
     querysets = []
     queryset_values = []
-    querysets.append(entity_models[0].objects.all())#objects.all().prefetch_related('activity_set')
-    queryvalues = []
-    queryset_values.append(entity_models[0].objects.all().values())#[entry for entry in queryset1]
 
-    entity2_lowercase = entities[1].lower()
+    querysets.append(entity_models[0].objects.all())#objects.all().prefetch_related('activity_set')
+
+    #ent1_fields = [field for field in entity_models[0]._meta.get_fields() if type(field).__name__!="AutoField"]
+    #print(ent1_fields)
+    #print("@@@@@@@@@-----@@@@@@@@@@")
+
+    ent1_fields = []
+    for field in entity_models[0]._meta.get_fields():
+        if type(field).__name__ != "AutoField":
+            if field.is_relation:
+                if field.many_to_one:
+                    if field.related_model.__name__ != "Activity":
+                        if field.related_model.__name__ == "People":
+                            ent1_fields.append(field.name + "_id__first_name")
+                            ent1_fields.append(field.name + "_id__last_name")
+                        else:
+                            ent1_fields.append(field.name + "_id__name")
+                else:
+                    if field.many_to_many:
+                        if field.related_model.__name__ != "Activity":
+                            if field.related_model.__name__ == "People":
+                                ent1_fields.append(field.name + "__first_name")
+                                ent1_fields.append(field.name + "__last_name")
+                            else:
+                                ent1_fields.append(field.name + "__name")
+            else:
+                ent1_fields.append(field.name)
+
+    print(ent1_fields)
+
+    queryset_values.append(entity_models[0].objects.all().values(*ent1_fields))#[entry for entry in queryset1]
+
 
     if rel_type_entities[0] == 'm':
         for ent1 in querysets[0]:
@@ -161,7 +213,7 @@ def get_subtable(request):
                 if(rel_type_entities[i]=="m"):
                     fields.append(entities[i].lower()+"s__name")
                 if(rel_type_entities[i]=="f"):
-                    fields.append(entities[i].lower() + "__name")
+                    fields.append(entities[i].lower() + "_id__name")
             final_query_values=ent1.activity_set.all().values(*fields)
             for result in final_query_values:
                 print(result)

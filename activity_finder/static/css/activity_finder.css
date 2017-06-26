@@ -8,3 +8,6 @@
     height: 100%;
     float: left;
 }
+#export-table{
+    display:none;
+}
