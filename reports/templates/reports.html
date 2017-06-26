@@ -15,6 +15,27 @@
     <link rel="stylesheet" type="text/css" href="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.css" %}">
     <script src="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.js" %}"></script>
 
+      <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/TableExport/3.2.5/css/tableexport.min.css">
+
+      <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>-->
+      <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/TableExport/3.3.5/js/tableexport.min.js"></script>
+
+    <script type="text/javascript" src="{% static "/js/tableExport/tableExport.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "/js/tableExport/jquery.base64.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "/js/tableExport/html2canvas.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "/js/tableExport/jspdf/libs/sprintf.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "/js/tableExport/jspdf/jspdf.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "/js/tableExport/jspdf/libs/base64.js" %}"></script>
+
+
+
 
 
 </head>
@@ -35,11 +56,16 @@
 
 </div>
 <div id="gridbox" style="width:100%;height:400px;"></div>
-<button id="export-table" class="btn btn-info btn-lg">
+<a href="#" onClick ="$('.objbox table').tableExport({type:'json',escape:'false'});">JSON</a>
+<a href="#" onClick ="$('.objbox table').tableExport({type:'excel',escape:'false'});">XLS</a>
+<a href="#" onClick ="$('.objbox table').tableExport({type:'csv',escape:'false'});">CSV</a>
+<a href="#" onClick ="$('.objbox table').tableExport({type:'pdf',escape:'false'});">PDF</a>
+<!--<button id="export-table-btn" class="btn btn-info btn-lg">
     <span class="glyphicon glyphicon-download"></span> Export table
-</button>
+</button>-->
 
 <script>
+
     var selected_entity = $('#entities-cb :selected').text();
     console.log(selected_entity)
 
@@ -79,6 +105,8 @@
           mygrid.init();      //finishes initialization and renders the grid on the page
           mygrid.parse(data.data,"json"); //takes the name and format of the data source
           console.log(data);
+
+          //exportTable();
         })
           .fail(function() {
             alert( "error" );
@@ -136,12 +164,28 @@
                 }
             });
 
-
+            //exportTable()
             current_filter++;
 
         });
       });
     });
+
+
+
+    /*function exportTable(){
+     $(".objbox table").tableExport({
+         headings: true,                    // (Boolean), display table headings (th/td elements) in the <thead>
+         footers: true,                     // (Boolean), display table footers (th/td elements) in the <tfoot>
+         formats: ["xls", "csv", "txt"],    // (String[]), filetypes for the export
+         fileName: "id",                    // (id, String), filename for the downloaded file
+         bootstrap: true,                   // (Boolean), style buttons using bootstrap
+         position: "bottom" ,                // (top, bottom), position of the caption element relative to table
+         ignoreRows: null,                  // (Number, Number[]), row indices to exclude from the exported file
+         ignoreCols: null,                 // (Number, Number[]), column indices to exclude from the exported file
+         ignoreCSS: ".tableexport-ignore"   // (selector, selector[]), selector(s) to exclude from the exported file
+         });
+     }*/
 
         
 
