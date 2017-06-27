@@ -25,7 +25,7 @@ SECRET_KEY = '#ufu4$*1cd(vkk#gg76hxo$t3y$chk5+_+gqq(51g4kxd%4dk$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [columbus.exp.sis.pitt.edu:8000]
 
 
 # Application definition
