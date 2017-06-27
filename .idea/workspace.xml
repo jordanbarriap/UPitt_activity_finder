@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="65e33904-aa01-4db2-bc7c-bea1728349cc" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/activity_finder/static/css/activity_finder.css" afterPath="$PROJECT_DIR$/activity_finder/static/css/activity_finder.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/templates/reports.html" afterPath="$PROJECT_DIR$/reports/templates/reports.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/UPitt_activity_finder/settings.py" afterPath="$PROJECT_DIR$/UPitt_activity_finder/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -54,6 +54,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/UPitt_activity_finder/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="179">
+              <caret line="27" column="43" lean-forward="false" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reports/views.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -66,11 +76,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="reports.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="reports.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reports/templates/reports.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="61" column="33" lean-forward="false" selection-start-line="61" selection-start-column="33" selection-end-line="61" selection-end-column="33" />
+            <state relative-caret-position="84">
+              <caret line="56" column="6" lean-forward="true" selection-start-line="56" selection-start-column="6" selection-end-line="56" selection-end-column="6" />
               <folding>
                 <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#html#0;n#!!top" expanded="true" />
               </folding>
@@ -81,8 +91,8 @@
       <file leaf-file-name="activity_finder.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/activity_finder/static/css/activity_finder.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="17" lean-forward="false" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+            <state relative-caret-position="180">
+              <caret line="12" column="1" lean-forward="true" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -137,13 +147,13 @@
         <option value="$PROJECT_DIR$/activity_finder/templates/index.html" />
         <option value="$PROJECT_DIR$/activity_finder/admin.py" />
         <option value="$PROJECT_DIR$/UPitt_activity_finder/urls.py" />
-        <option value="$PROJECT_DIR$/UPitt_activity_finder/settings.py" />
         <option value="$PROJECT_DIR$/activity_finder/views.py" />
         <option value="$PROJECT_DIR$/reports/urls.py" />
         <option value="$PROJECT_DIR$/activity_finder/models.py" />
         <option value="$PROJECT_DIR$/reports/views.py" />
         <option value="$PROJECT_DIR$/activity_finder/static/css/activity_finder.css" />
         <option value="$PROJECT_DIR$/reports/templates/reports.html" />
+        <option value="$PROJECT_DIR$/UPitt_activity_finder/settings.py" />
       </list>
     </option>
   </component>
@@ -803,14 +813,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/UPitt_activity_finder/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="41" column="13" lean-forward="false" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/UPitt_activity_finder/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
@@ -869,14 +871,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/activity_finder/static/css/activity_finder.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="17" lean-forward="false" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/reports/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-433">
@@ -889,11 +883,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/reports/templates/reports.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="61" column="33" lean-forward="false" selection-start-line="61" selection-start-column="33" selection-end-line="61" selection-end-column="33" />
+        <state relative-caret-position="84">
+          <caret line="56" column="6" lean-forward="true" selection-start-line="56" selection-start-column="6" selection-end-line="56" selection-end-column="6" />
           <folding>
             <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#html#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/activity_finder/static/css/activity_finder.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="1" lean-forward="true" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/UPitt_activity_finder/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="27" column="43" lean-forward="false" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
+          <folding />
         </state>
       </provider>
     </entry>
