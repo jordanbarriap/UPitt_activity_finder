@@ -16,5 +16,10 @@ Setup of Django environment
 7. Install mysqlclient (library for connecting to MySQL)\
 	$pip3 install mysqlclient
 8. Create a database schema
+	- schema name: UPitt_activity_finder_db
+	- $python manage.py makemigrations
+	- $python manage.py migrate
 9. Check if server runs\
-    $python manage.py runserver 127.0.0.1:8000
+   	$python manage.py runserver 127.0.0.1:8000
+10. Create super user for administration login\
+	$python manage.py createsuperuser
