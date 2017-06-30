@@ -11,21 +11,31 @@ admin.site.register(CommunityPartner)
 admin.site.register(Course)
 admin.site.register(FocusArea)
 admin.site.register(Location)
-admin.site.register(People)
+
 admin.site.register(Population)
 admin.site.register(ServedNeighbourhood)
 admin.site.register(School)
 admin.site.register(Unit)
 
 #header
-admin.site.site_header = 'Pitt Activity Finder administration'
-admin.site.site_title = 'Pitt side admin'
-admin.site.index_title = 'Pitt side administration'
+# admin.site.site_header = 'Pitt Activity Finder administration'
+# admin.site.site_title = 'Pitt side admin'
+# admin.site.index_title = 'Pitt side administration'
 
 class ActivityModelAdmin(admin.ModelAdmin):
+    list_display = ["name","activitytype","people","contactInformation"]
+    list_filter = ["activitytype"]
+    list_editable = ["contactInformation"]
     formfield_overrides = {
-        models.CharField: {'widget': TextInput(attrs={'size':''})},
-        #models.TextField: {'widget': Textarea(attrs={'rows':4, 'cols':100})},
+        models.CharField: {'widget': TextInput(attrs={'size':'50'})},
+        models.TextField: {'widget': Textarea(attrs={'rows':4, 'cols':100})},
     }
-
 admin.site.register(Activity, ActivityModelAdmin)
+
+class PeopleModelAdmin(admin.ModelAdmin):
+    list_display = ["first_name","last_name", "type"]
+    list_display_links = ["first_name","last_name"]
+    list_filter = ["type"]
+
+admin.site.register(People, PeopleModelAdmin)
+

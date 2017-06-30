@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['localhost','columbus.exp.sis.pitt.edu']
 # Application definition
 
 INSTALLED_APPS = [
+    'activity_finder',
     'django.contrib.admin',
     #'django.contrib.admindocs',
     'django.contrib.auth',
@@ -38,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'activity_finder',
     'reports'
 ]
 
@@ -57,8 +57,8 @@ ROOT_URLCONF = 'UPitt_activity_finder.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -66,6 +66,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'loaders':[
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ]
         },
     },
 ]
