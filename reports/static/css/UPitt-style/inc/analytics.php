@@ -1,0 +1,1 @@
+<?php	// This page should contain Google Analytics ?>

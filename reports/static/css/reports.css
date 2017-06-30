@@ -1,0 +1,15 @@
+#reports-input{
+    margin: 0 0 10px; line-height:60px; font-size:14px;
+}
+
+#filters-div{
+    margin: 0 0 10px; line-height:60px; font-size:14px;
+}
+
+.filter{
+    margin-left: 30px; margin-rigth: 30px;
+}
+
+#gridbox{
+    width:98%; height:60%; margin-left: 10px;
+}
