@@ -256,14 +256,8 @@ def get_subtable(request):
                             row = row + 1
                     ent1_count = ent1_count + 1'''
 
-    print(rows)
-    print("$$$$$$$$")
     query_values = [entry for entry in rows]
     for value in query_values:
-        print(value)
-        print("%%%%%%")
-        #value = [entry for entry in value]
-        #print(value)
         if len(columns)==0:
             columns = list(value.keys())
             for column in columns:
@@ -274,10 +268,13 @@ def get_subtable(request):
 
         json_data.append(json_value)
         row = row + 1
+
+    json_data_no_repeated = [i for n, i in enumerate(json_data) if i not in json_data[n + 1:]]#delete possible duplicated rows in the query
+
     data = {
         'columns':columns,
         'types':list(data_types),
         'filters':list(data_filters),
-        'data':{'rows': json_data}
+        'data':{'rows': json_data_no_repeated}
     }
     return JsonResponse(data)

@@ -1,0 +1,33 @@
+#reports-input{
+    margin: 0 0 10px; line-height:60px; font-size:14px;
+}
+
+#filters-div{
+    margin: 0 0 10px; line-height:60px; font-size:14px; float:left;
+}
+
+#export-div{
+    display: none; float:right; margin-right:40px; margin-bottom:5px; font-size:14px;
+}
+
+#export-div span{
+    font-size:14px;
+}
+
+.filter{
+    margin-left: 30px; margin-rigth: 30px;
+}
+
+#gridbox{
+    width:98%; height:70%; margin-left: 10px;
+}
+
+#control-div{
+    width:100%;
+}
+
+button.export-btn{
+    height:42px;
+    width:100px;
+}
+
