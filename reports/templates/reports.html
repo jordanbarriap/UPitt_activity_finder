@@ -49,16 +49,21 @@
     </select>
 
     </br>
-    <button id="add-filter-btn" class="btn btn-info btn-lg">
+    <button disabled id="add-filter-btn" class="btn btn-info btn-lg">
         <span class="glyphicon glyphicon-plus-sign"></span> Add filter
     </button>
 </div>
 
+<div id=control-div">
 <div id="filters-div">
-
 </div>
-<button class="export-btn" id="xls-btn">Excel</button>
-<button class="export-btn" id="pdf-btn">Pdf</button>
+<div id="export-div">
+    <span> Export data: </span>
+    <button class="btn export-btn btn-lg" id="xls-btn" style="background: white url('{% static 'image/excel-icon.png' %}') no-repeat;background-size: 40px 40px;"><span style="float:right;">Excel</span></button>
+    <button class="btn export-btn btn-lg" id="pdf-btn" style="background: white url('{% static 'image/pdf-icon.png' %}') no-repeat;background-size: 40px 40px;"><span style="float:right;">PDF</span></button>
+</div>
+</div>
+
 <!--<a href="#" onClick ="$('.objbox table').tableExport({type:'excel',escape:'false',tableName:'report'});">XLS</a>
 <a href="#" onClick ="$('.objbox table').tableExport({type:'csv',escape:'false',tableName:'report'});">CSV</a>
 <a href="#" onClick ="$('.objbox table').tableExport({type:'pdf',escape:'false', pdfFontSize:7, tableName:'report'});">PDF</a>-->
@@ -111,6 +116,10 @@
           mygrid.init();      //finishes initialization and renders the grid on the page
           mygrid.parse(data.data,"json"); //takes the name and format of the data source
           console.log(data);
+
+          $("#add-filter-btn").prop('disabled', false); //enable the addition of filters
+
+          $("#export-div").show();//show export buttons
 
           //exportTable();
         })
@@ -173,6 +182,7 @@
             });
 
             //exportTable()
+
             current_filter++;
 
         });

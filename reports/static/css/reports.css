@@ -3,7 +3,15 @@
 }
 
 #filters-div{
-    margin: 0 0 10px; line-height:60px; font-size:14px;
+    margin: 0 0 10px; line-height:60px; font-size:14px; float:left;
+}
+
+#export-div{
+    display: none; float:right; margin-right:40px; margin-bottom:5px; font-size:14px;
+}
+
+#export-div span{
+    font-size:14px;
 }
 
 .filter{
@@ -11,5 +19,15 @@
 }
 
 #gridbox{
-    width:98%; height:60%; margin-left: 10px;
+    width:98%; height:70%; margin-left: 10px;
 }
+
+#control-div{
+    width:100%;
+}
+
+button.export-btn{
+    height:42px;
+    width:100px;
+}
+
