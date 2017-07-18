@@ -1,29 +1,36 @@
+{% extends "admin/base_site.html" %}
 {% load static %}
-<html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Reports</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+
+{% block title %}{{ title }} Pitt side admin{% endblock title%}
+
+{% block content_title %}{% if title %}<h1>Pitt side administration</h1>{% endif %}{% endblock content_title%}
+
+{% block extrastyle %}
+<style>
+    #header{
+    background-color: #111150;;
+    }
+    <!--<link rel="icon" type="image/png" href="https://www.w3schools.com/css/trolltunga.jpg" />-->
+</style>
+{% endblock extrastyle%}
+
+{% block extrahead %}
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
 
-    <!--<link type="text/css" rel="stylesheet" href="{% static "js/jsgrid-1.5.3/jsgrid.min.css" %}" />
-    <link type="text/css" rel="stylesheet" href="{% static "js/jsgrid-1.5.3/jsgrid-theme.min.css" %}" />
-    <script type="text/javascript" src="{% static "js/jsgrid-1.5.3/jsgrid.min.js" %}"></script>-->
 
-    <link rel="stylesheet" type="text/css" href="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.css" %}">
+    <!--<link rel="stylesheet" type="text/css" href="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.css" %}">-->
     <script src="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.js" %}"></script>
 
-    <link rel="stylesheet" type="text/css" href="{% static "/css/UPitt-style/css/main.css" %}">
+    <!--<link rel="stylesheet" type="text/css" href="{% static "/css/UPitt-style/css/main.css" %}">-->
     <link rel="stylesheet" type="text/css" href="{% static "/css/reports.css" %}">
 
-      <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/TableExport/3.2.5/css/tableexport.min.css">
 
-      <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/TableExport/3.2.5/css/tableexport.min.css">
+
 
     <script type="text/javascript" src="{% static "/js/tableExport/tableExport.js" %}"></script>
     <script type="text/javascript" src="{% static "/js/tableExport/jquery.base64.js" %}"></script>
@@ -31,14 +38,10 @@
     <script type="text/javascript" src="{% static "/js/tableExport/jspdf/libs/sprintf.js" %}"></script>
     <script type="text/javascript" src="{% static "/js/tableExport/jspdf/jspdf.js" %}"></script>
     <script type="text/javascript" src="{% static "/js/tableExport/jspdf/libs/base64.js" %}"></script>
+{% endblock extrahead%}
 
 
-</head>
-<body>
-<div id="pitt-header" class="blue">
-    <a href="http://www.pitt.edu/" title="University of Pittsburgh" id="p-link">University of Pittsburgh</a>
-    <span>Activity Reports</span>
-</div>
+{% block content %}
 <div id="reports-input">
     <span id="reports-span">Choose the data you want to report:</span>
     <select id="entities-cb">
@@ -49,9 +52,18 @@
     </select>
 
     </br>
-    <button disabled id="add-filter-btn" class="btn btn-info btn-lg">
+    <button disabled id="add-filter-btn" class="addlink object-tools">
         <span class="glyphicon glyphicon-plus-sign"></span> Add filter
     </button>
+
+    <ul class="object-tools">
+            <li>
+              <a href="#" class="addlink">
+                test
+              </a>
+            </li>
+        </ul>
+
 </div>
 
 <div id=control-div">
@@ -68,10 +80,6 @@
 <a href="#" onClick ="$('.objbox table').tableExport({type:'csv',escape:'false',tableName:'report'});">CSV</a>
 <a href="#" onClick ="$('.objbox table').tableExport({type:'pdf',escape:'false', pdfFontSize:7, tableName:'report'});">PDF</a>-->
 <div id="gridbox"></div>
-
-<!--<button id="export-table-btn" class="btn btn-info btn-lg">
-    <span class="glyphicon glyphicon-download"></span> Export table
-</button>-->
 
 <script>
 
@@ -96,9 +104,6 @@
 
        $("#filters-div").empty();//Clean additional info filters if any
 
-       /*var jqxhr = $.get( "/reports/get_filters", function(data) {
-          filters = data.filters;
-          console.log(filters);*/
 
        var jqxhr = $.get( "/admin/reports/get_table", {'entity': selected_entity}, function(data) {
           var header = data.columns.join();
@@ -199,26 +204,12 @@
         mygrid.toPDF("http://dhtmlxgrid.appspot.com/export/pdf");
     });
 
-    /*function exportTable(){
-     $(".objbox table").tableExport({
-         headings: true,                    // (Boolean), display table headings (th/td elements) in the <thead>
-         footers: true,                     // (Boolean), display table footers (th/td elements) in the <tfoot>
-         formats: ["xls", "csv", "txt"],    // (String[]), filetypes for the export
-         fileName: "id",                    // (id, String), filename for the downloaded file
-         bootstrap: true,                   // (Boolean), style buttons using bootstrap
-         position: "bottom" ,                // (top, bottom), position of the caption element relative to table
-         ignoreRows: null,                  // (Number, Number[]), row indices to exclude from the exported file
-         ignoreCols: null,                 // (Number, Number[]), column indices to exclude from the exported file
-         ignoreCSS: ".tableexport-ignore"   // (selector, selector[]), selector(s) to exclude from the exported file
-         });
-     }*/
 
-        
+
 
 
 
 
 
 </script>
-</body>
-</html>
+{% endblock content%}

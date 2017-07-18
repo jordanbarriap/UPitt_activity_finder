@@ -18,7 +18,8 @@ from django.contrib import admin
 
 
 urlpatterns = [
+    url(r'^admin/reports/', include('reports.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^reports/', include('reports.urls')),
+    #url(r'^reports/', include('reports.urls')),
     url(r'', include('activity_finder.urls')),
 ]

@@ -1,6 +1,8 @@
 from django.conf.urls import include, url
 from . import views
 
+from django.contrib import admin
+
 urlpatterns = [
     url(r'^$', views.reports),
     url(r'^get_filters$', views.get_filters),

@@ -10,14 +10,17 @@ from activity_finder.models import Activity
 
 from django.apps import apps
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def reports(request):
     entities = apps.get_app_config('activity_finder').get_models(include_auto_created=False)
     entities_list = []
     for entity in entities:
         entities_list.append(entity.__name__)
-    return render(request, 'reports.html', {'entities':entities_list})
+    return render(request, 'reports2.html', {'entities':entities_list})
 
-
+@login_required
 def get_filters(request):
     selected_entity = request.GET.get('entity', None)
     '''act_attributes = Activity._meta.fields
@@ -38,7 +41,7 @@ def get_filters(request):
     }
     return JsonResponse(data)
 
-
+@login_required
 def get_table(request):
     entity = request.GET.get('entity', None)
     entity_model = apps.get_model(app_label='activity_finder', model_name=entity)
@@ -121,6 +124,7 @@ def get_subfilters(request):
     #}
     return JsonResponse(data)
 
+@login_required
 def get_subtable(request):
     num_entities = int(request.GET.get('num_entities', None))
     entities = []
@@ -278,3 +282,4 @@ def get_subtable(request):
         'data':{'rows': json_data_no_repeated}
     }
     return JsonResponse(data)
+
