@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'reports'
+    'reports',
+    'geoposition'
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+#Google Maps API Key
+GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyCPqXhtFS9Fu0-sCptEPyrl7nknrVGQD2g'
+#default coordinates for locations = 40.444269,-79.953260 (Cathedral of Learning)
+
+GEOPOSITION_MAP_OPTIONS = {
+    'minZoom': 3,
+    'maxZoom': 15,
+}
+
+GEOPOSITION_MARKER_OPTIONS = {
+    'cursor': 'move'
+}

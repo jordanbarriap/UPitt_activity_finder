@@ -1,51 +1,263 @@
-{% load static %}
 <html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
     <title>University of Pittsburgh</title>
-
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
-   integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
-   crossorigin=""/>
-
+    <!-- css -->
+    <link rel="stylesheet" type="text/css" href="../static/css/map_css.css" />
+    <!--<link rel="stylesheet" type="text/css" href="../static/css/style9.css" />-->
+    <!-- jquery -->
+    <script src="../static/js/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <!-- map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+          integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+          crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
-   integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
-   crossorigin=""></script>
-
-    <link rel="stylesheet" type="text/css" href="{% static "css/activity_finder.css" %}" />
-
-    <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
-
-
-
+            integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+            crossorigin=""></script>
+    <!--<script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet'/>-->
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <!-- dataTable -->
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
 </head>
 <body>
-    <div id="acts-table">
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-            </tr>
-            {% for act in activities %}
-            <tr>
-                <td>{{ act.name }}</td>
-                <td>{{ act.description }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="title-words" color="#E7EA9A">University of Pittsburgh</h1>
+        </div>
     </div>
-    <div id="map">
+    <div class="row">
+        <div class="col-md-12">
+            Hiding Past:<input type="checkbox" id="happen_filter" onclick="filterHappen()">
+            Sort by:
+            <input type="button" class="sortbystarttime"  value="StartTime">
+            <input type="button" class="sortbyendtime"  value="EndTime">
+            <input type="button" class="sortbyname"  value="Name">
+            Location:
+            <select id="selectLocation" onchange="searchLocation()">
+                <option value="">ALL</option>
+                {% for act in locations %}
+                <div class="item">
+                    <option value={{ act.name }}>{{ act.name }}</option>
+                </div>
+                {% endfor %}
+            </select>
+            Activity Type:
+            <select id="selectActivity" onchange="searchActivityType()">
+                <option value="">ALL</option>
+                {% for act in activitytypes %}
+                <div class="item">
+                    <option value={{ act.name }}>{{ act.name }}</option>
+                </div>
+                {% endfor %}
+            </select>
+            Search:<input type="text" id="searchkeywords" onkeyup="searchKeywords()">
+        </div>
     </div>
-    <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-            maxZoom: 18,
-            id: 'UPitt_activity_finder',
-            accessToken: 'pk.eyJ1Ijoiam9yZGFuYmFycmlhcCIsImEiOiJjajN5cmpndWgwMDd1MnBwYjlneDd2bWVhIn0.EjQMzsVnJb3xmLMIhth5AQ'
-        }).addTo(map);
-    </script>
+    <div class="row">
+        <div class="col-md-3">
+            <table id="table_id" class="display">
+                <thead>
+                <tr>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for act in activities %}
+                <tr>
+                    <td>
+                        <div class="item">
+                            <h3>{{ act.name }}</h3>
+                        </div>
+                        <p hidden="hidden">
+                            Description:{{ act.description }}<br>
+                            Location:{% for location in act.locations.all %}
+                                        {{ location.name}};
+                                     {% endfor %}<br>
+                            ActivityType:{{ act.activitytype }}<br>
+                            Start Date:{{ act.start_date }}<br>
+                            End Date:{{ act.end_date }}<br>
+                        </p>
+                    </td>
+                    <td>
+                        {{ act.start_date }}
+                    </td>
+                    <td>
+                        {{ act.end_date }}
+                    </td>
+                    <td>
+                        {% for location in act.locations.all %}
+                        {{ location.name}}
+                        {% endfor %}
+
+                    </td>
+                    <td>
+                        {{ act.activitytype }}
+                    </td>
+                    <td>
+                        {{ act.happening }}
+                    </td>
+                    <td>
+                        {{ act.activitytype }}
+                    </td>
+                    <td>
+                        {{ act.happening }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-9">
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+          $('.item').on("click", function () {
+                 $(this).next().slideToggle(100);
+                 $(this).attr("class","item active");
+                 $('p').not($(this).next()).slideUp('fast');
+             });
+          <!--manipulate the datatable-->
+          $(document).ready(
+              function () {
+                    $('#table_id').DataTable({
+                        "sDom": 'trp',
+                        "columns": [
+                            { "visible": true, orderable:false},
+                            { "visible": false },
+                            { "visible": false },
+                            { "visible": false },
+                            { "visible": false },
+                            { "visible": false },
+                            { "visible": false },
+                            { "visible": false }
+                         ],
+                    });
+               }
+          );
+          var nameFlag=false;
+          $('.sortbyname').click(function(){
+               if(nameFlag)
+               {
+                    $('#table_id').dataTable().fnSort([[0, 'asc']]);
+               }
+               else
+               {
+                    $('#table_id').dataTable().fnSort([[0, 'des']]);
+               }
+               nameFlag=!nameFlag;
+          });
+          var startTimeFlag=false;
+          $('.sortbystarttime').click(function(){
+               if(startTimeFlag)
+               {
+                    $('#table_id').dataTable().fnSort([[1, 'asc']]);
+               }
+               else
+               {
+                    $('#table_id').dataTable().fnSort([[1, 'des']]);
+               }
+               startTimeFlag=!startTimeFlag;
+          });
+          var endTimeFlag=false;
+          $('.sortbyendtime').click(function(){
+               if(endTimeFlag)
+               {
+                    $('#table_id').dataTable().fnSort([[2, 'asc']]);
+               }
+               else
+               {
+                    $('#table_id').dataTable().fnSort([[2, 'des']]);
+               }
+               endTimeFlag=!endTimeFlag;
+          });
+          function searchLocation()
+          {
+                var obj=document.getElementById("selectLocation");
+                var index = obj.selectedIndex;
+                var text = obj.options[index].text;
+                var value = obj.options[index].value;
+                $('#table_id').DataTable().column(3).search(value).draw();
+          }
+          function searchActivityType()
+          {
+                var obj=document.getElementById("selectActivity");
+                var index = obj.selectedIndex;
+                var text = obj.options[index].text;
+                var value = obj.options[index].value;
+                $('#table_id').DataTable().column(4).search(value).draw();
+          }
+          function searchKeywords()
+          {
+                var value=document.getElementById("searchkeywords").value;
+                $('#table_id').DataTable().search(value).draw();
+          }
+          function filterHappen()
+          {
+                var obj=document.getElementById("happen_filter");
+                $('#table_id').DataTable().draw();
+          }
+
+          $.fn.dataTable.ext.search.push(
+                function( settings, data, dataIndex ) {
+                    var dataDate=new Date(data[2]);
+                    if(dataDate=="Invalid Date")
+                    {
+                        return true;
+                    }
+                    var curDate=new Date();
+                    if(document.getElementById("happen_filter").checked)
+                    {
+                        if(curDate<=dataDate)
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            );
+</script>
+<script>
+
+  // initialize the map
+  var map = L.map('map').setView([40.447377, -79.952708], 18);
+
+  // load a tile layer
+  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  var marker = L.marker([40.447377, -79.952708]).addTo(map);
+  marker.bindPopup("Test!").openPopup();
+
+
+</script>
+<!--<script>
+function myMap() {
+var mapProp= {
+    center:new google.maps.LatLng(40.444269,-79.953260),
+    zoom:5,
+};
+var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPqXhtFS9Fu0-sCptEPyrl7nknrVGQD2g&callback=myMap"></script>-->
 </body>
 </html>

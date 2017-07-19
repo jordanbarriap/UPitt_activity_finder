@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import date
+from geoposition.fields import GeopositionField
 
 class ActivityType(models.Model):
     idActivityType = models.AutoField(primary_key=True)
@@ -33,6 +34,7 @@ class Location(models.Model):
     idLocation = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200, blank=True, null=True)
+    position = GeopositionField()
     #activities = models.ManyToManyField(Activity)
 
     def __str__(self):
