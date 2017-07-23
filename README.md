@@ -23,3 +23,5 @@ Setup of Django environment
    	$python manage.py runserver 127.0.0.1:8000
 10. Create super user for administration login\
 	$python manage.py createsuperuser
+11. Install django-geoposition
+    $pip install django-geoposition
