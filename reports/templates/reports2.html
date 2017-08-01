@@ -51,19 +51,18 @@
         {% endfor %}
     </select>
 
-    </br>
-    <button disabled id="add-filter-btn" class="addlink object-tools">
-        <span class="glyphicon glyphicon-plus-sign"></span> Add filter
+     <!--</br>-->
+    <button disabled id="add-filter-btn" class="addlink object-tools" style="width:100px;height:50px; margin:0px; font-size: 15px;">
+        <span class="glyphicon glyphicon-plus-sign">Add filter</span>
     </button>
 
-    <ul class="object-tools">
-            <li>
-              <a href="#" class="addlink">
-                test
-              </a>
-            </li>
-        </ul>
-
+    <!--<ul class="object-tools">-->
+            <!--<li>-->
+              <!--<a href="#" class="addlink">-->
+                <!--test-->
+              <!--</a>-->
+            <!--</li>-->
+        <!--</ul>-->
 </div>
 
 <div id=control-div">
@@ -79,7 +78,7 @@
 <!--<a href="#" onClick ="$('.objbox table').tableExport({type:'excel',escape:'false',tableName:'report'});">XLS</a>
 <a href="#" onClick ="$('.objbox table').tableExport({type:'csv',escape:'false',tableName:'report'});">CSV</a>
 <a href="#" onClick ="$('.objbox table').tableExport({type:'pdf',escape:'false', pdfFontSize:7, tableName:'report'});">PDF</a>-->
-<div id="gridbox"></div>
+<div id="gridbox" style="height:450px;"></div>
 
 <script>
 
@@ -203,13 +202,6 @@
         //exporting to PDF by using the online export service
         mygrid.toPDF("http://dhtmlxgrid.appspot.com/export/pdf");
     });
-
-
-
-
-
-
-
 
 </script>
 {% endblock content%}
