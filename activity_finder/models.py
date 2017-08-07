@@ -1,6 +1,10 @@
 from django.db import models
 from datetime import date
 from geoposition.fields import GeopositionField
+from geopy.geocoders import GoogleV3
+
+import pprint
+import json
 
 class ActivityType(models.Model):
     idActivityType = models.AutoField(primary_key=True)
@@ -33,12 +37,69 @@ class FocusArea(models.Model):
 class Location(models.Model):
     idLocation = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200, blank=True, null=True)
     position = GeopositionField()
+    address = models.CharField(max_length=200, blank=True, null=True)
+    neighborhood = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
     #activities = models.ManyToManyField(Activity)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        pp = pprint.PrettyPrinter()
+        geolocator = GoogleV3(api_key="AIzaSyCPqXhtFS9Fu0-sCptEPyrl7nknrVGQD2g")
+        location = geolocator.reverse(str(self.position.latitude)+","+str(self.position.longitude))
+        address = location[0].address
+        if address:
+            self.address = address
+
+        #pp.pprint(location[0].raw)
+
+        address_components = location[0].raw["address_components"]
+
+        # Extract neighborhood information
+        neighborhood_data = [d for d in address_components if "neighborhood" in d['types']]
+        neighborhood = neighborhood_data[0]["long_name"]
+        print("Neighborhood: "+neighborhood)
+        if neighborhood:
+            self.neighborhood = neighborhood
+
+        # Extract city information
+        city_data = [d for d in address_components if "locality" in d['types']]
+        city = city_data[0]["long_name"]
+        print("City: " + city)
+        if city:
+            self.city = city
+
+        #Extract county information
+        county_data = [d for d in address_components if "administrative_area_level_2" in d['types']]
+        county = county_data[0]["long_name"]
+        print("County: "+county)
+        if county:
+            self.county = county
+
+        #Extract region information (just for PA)
+
+        # Extract state information
+        state_data = [d for d in address_components if "administrative_area_level_1" in d['types']]
+        state = state_data[0]["long_name"]
+        print("State: " + state)
+        if state:
+            self.state = state
+
+        # Extract country information
+        country_data = [d for d in address_components if "country" in d['types']]
+        country = country_data[0]["long_name"]
+        print("Country: " + country)
+        if country:
+            self.country = country
+
+        super(Location,self).save(*args, **kwargs)  # Call the "real" save() method.
+    #    do_something_else()
 
 
 class School(models.Model):
