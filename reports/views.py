@@ -45,110 +45,257 @@ def get_filters(request):
     }
     return JsonResponse(data)
 
+# @login_required
+# def get_table(request):
+#     entity = request.GET.get('entity', None)
+#     print("Testing gettable: ",entity)
+#     entity_model = apps.get_model(app_label='activity_finder', model_name=entity)
+#     fields = []
+#     for field in entity_model._meta.get_fields():
+#         if type(field).__name__ != "AutoField" or entity_model.__name__=="Activity":
+#             if field.is_relation:
+#                 if field.many_to_one:
+#                     # print("\nMany to one!")
+#                     # print(field)
+#                     if field.related_model.__name__!="Activity":
+#                         if field.related_model.__name__=="People":
+#                             # fields.append(field.name)
+#                             fields.append(field.name+"__first_name")
+#                             fields.append(field.name+"__last_name")
+#                             fields.append(field.name + "_id__email")
+#                         else:
+#                             fields.append(field.name + "_id__name")
+#                 else:
+#                     if field.many_to_many:
+#                         # print("\nMany to many! ")
+#                         # print(field)
+#                         if field.related_model.__name__ != "Activity":
+#                             if field.related_model.__name__=="People":
+#                                 fields.append(field.name)
+#                                 fields.append(field.name+"__first_name")
+#                                 fields.append(field.name+"__last_name")
+#                             else:
+#                                 if field.related_model.__name__ == "FocusArea":
+#                                     fields.append(field.name)
+#                                     fields.append(field.name + "__name")
+#             else:
+#                 # print("\nNo relation!")
+#                 # print(field)
+#                 fields.append(field.name)
+#
+#     # leader_model = entity_model.universityleaders.through.objects.all()
+#     # print(leader_model)
+#
+#     # if entity_model.__name__ != "Activity":
+#     #     fields.append("Activity__name")
+#
+#     print(fields)
+#     print(entity_model)
+#     query_set = entity_model.objects.values_list(*fields)
+#
+#     queryset_temp =[]
+#     queryset_temp.append(entity_model.objects.all())
+#     # print("#CHECING QUERY SET TEMP")
+#     # print(queryset_temp)
+#     row = 0
+#     rows = []
+#     if entity_model.__name__ != "Activity":
+#         print("Here")
+#         for ent1 in queryset_temp[0]:
+#             # print("#CHECKING ENTITY")
+#             # print(ent1)
+#             fields_temp=["name"]
+#             final_query_values=ent1.activity_set.all().values_list(*fields_temp)
+#             print("\nFinal query values:")
+#             print(final_query_values)
+#         for result in final_query_values:
+#             print(result)
+#             print("******")
+#             print(queryset_values[0][ent1_count])
+#             rows.append(copy.copy(queryset_values[0][ent1_count]))
+#             print(rows[row])
+#             # print(result[result])
+#             rows[row] = rows[row] + result
+#             # for field in result:
+#             #     rows[row]= rows[row] + result[field]
+#             print(rows)
+#             row = row + 1
+#         print("#######")
+#
+#     # query_set = entity_model.objects.values(*fields)
+#     print(query_set)
+#     query_values = [entry for entry in query_set]
+#     print("\n#QUERY VALUE")
+#     print(query_values)
+#     json_data = []
+#     columns = []
+#     data_types = []
+#     data_filters = []
+#     row=1
+#
+#     # for value in query_values:
+#     #     if len(columns)==0:
+#     #         columns = list(value.keys())
+#     #         for column in columns:
+#     #             data_types.append(type(column).__name__)
+#     #             data_filters.append("#select_filter")
+#     #         # print(data_types)
+#     #     json_value={'id':row, 'data':list(value.values())}
+#     #     print(list(value.values()))
+#     #     # print(json_value)
+#     #     json_data.append(json_value)
+#     #     #print(value.values())
+#     #     row = row + 1
+#
+#     if entity_model.__name__=="Activity":
+#         columns = ['Name', 'Activity type', 'Description', 'Happening', 'Start date', 'End date', 'Outcomes', 'Funding', 'Unit notes', 'Contact name', 'Contact email',
+#             'check', 'Reviewed', 'University leader 1 - First name', 'University leader 1 - Last name', 'University leader 2 - First name',
+#            'University leader 2 - Last name', 'University leader 3 - First name', 'University leader 3 - Last name', 'Focus Area']
+#         # columns = ['name', 'activitytype_id__name', 'description', 'happening', 'start_date', 'end_date', 'outcomes', 'funding', 'unitNotes', 'people__first_name',
+#         #            'people__last_name', 'people_id__email', 'contactInformation', 'reviewed', 'universityleaders', 'universityleaders__first_name', 'universityleaders__last_name',
+#         #             'focusareas__name']
+#         query_values = AggregateFocusArea(query_values)
+#         print("\n")
+#         print(query_values)
+#         query_values = AggregateUniLeader(query_values)
+#     else:
+#         columns = fields
+#
+#
+#     # columns = fields
+#
+#
+#     for column in columns:
+#         data_types.append(type(column).__name__)
+#         data_filters.append("#select_filter")
+#     for value in query_values:
+#         # print(value)
+#         json_value={'id':row, 'data':value}
+#         # print(type(value))
+#         # print(value)
+#         # print(json_value)
+#         json_data.append(json_value)
+#         # print(value.values())
+#         row = row + 1
+#
+#     data = {
+#         'columns':columns,
+#         'types':list(data_types),
+#         'filters':list(data_filters),
+#         'data':{'rows': json_data}
+#     }
+#     # print("#CHECKING DATA")
+#     # print(data)
+#     return JsonResponse(data)
+
 @login_required
+#for applying the filter
 def get_table(request):
     entity = request.GET.get('entity', None)
     print("Testing gettable: ",entity)
     entity_model = apps.get_model(app_label='activity_finder', model_name=entity)
-    fields = []
-    for field in entity_model._meta.get_fields():
-        if type(field).__name__ != "AutoField" or entity_model.__name__=="Activity":
-            if field.is_relation:
-                if field.many_to_one:
-                    # print("\nMany to one!")
-                    # print(field)
-                    if field.related_model.__name__!="Activity":
-                        if field.related_model.__name__=="People":
-                            # fields.append(field.name)
-                            fields.append(field.name+"__first_name")
-                            fields.append(field.name+"__last_name")
-                            fields.append(field.name + "_id__email")
-                        else:
-                            fields.append(field.name + "_id__name")
-                else:
-                    if field.many_to_many:
-                        # print("\nMany to many! ")
-                        # print(field)
-                        if field.related_model.__name__ != "Activity":
-                            if field.related_model.__name__=="People":
-                                fields.append(field.name)
-                                fields.append(field.name+"__first_name")
-                                fields.append(field.name+"__last_name")
-                            else:
-                                if field.related_model.__name__ == "FocusArea":
-                                    fields.append(field.name)
-                                    fields.append(field.name + "__name")
-            else:
-                # print("\nNo relation!")
-                # print(field)
-                fields.append(field.name)
 
-    # leader_model = entity_model.universityleaders.through.objects.all()
-    # print(leader_model)
-    print(fields)
-    print(entity_model)
-    query_set = entity_model.objects.values_list(*fields)
-    # query_set = entity_model.objects.values(*fields)
-    # print(query_set)
-    query_values = [entry for entry in query_set]
-    # print("\nHere")
-    print(query_values)
-    json_data = []
-    columns = []
+    data=[]
+    query_values = []
     data_types = []
     data_filters = []
-    row=1
+    columns = []
+    json_data = []
+    row = 0
+    ent1_count=0
+    rows = []
 
-    # for value in query_values:
-    #     if len(columns)==0:
-    #         columns = list(value.keys())
-    #         for column in columns:
-    #             data_types.append(type(column).__name__)
-    #             data_filters.append("#select_filter")
-    #         # print(data_types)
-    #     json_value={'id':row, 'data':list(value.values())}
-    #     print(list(value.values()))
-    #     # print(json_value)
-    #     json_data.append(json_value)
-    #     #print(value.values())
-    #     row = row + 1
+    # print(rel_type_entities)
+    querysets = []
+    queryset_values = []
 
-    if entity_model.__name__=="Activity":
-        columns = ['Name', 'Activity type', 'Description', 'Happening', 'Start date', 'End date', 'Outcomes', 'Funding', 'Unit notes', 'Contact name', 'Contact email',
-            'check', 'Reviewed', 'University leader 1 - First name', 'University leader 1 - Last name', 'University leader 2 - First name',
-           'University leader 2 - Last name', 'University leader 3 - First name', 'University leader 3 - Last name', 'Focus Area']
-        # columns = ['name', 'activitytype_id__name', 'description', 'happening', 'start_date', 'end_date', 'outcomes', 'funding', 'unitNotes', 'people__first_name',
-        #            'people__last_name', 'people_id__email', 'contactInformation', 'reviewed', 'universityleaders', 'universityleaders__first_name', 'universityleaders__last_name',
-        #             'focusareas__name']
-        query_values = AggregateFocusArea(query_values)
-        print("\n")
-        print(query_values)
-        query_values = AggregateUniLeader(query_values)
-    else:
-        columns = fields
+    #print("\nModel: ", entity_models[0])
+
+    querysets.append(entity_model.objects.all())
+
+    ent1_fields = []
+    for field in entity_model._meta.get_fields():
+        if type(field).__name__ != "AutoField":
+            if field.is_relation:
+                if field.many_to_one:
+                    if field.related_model.__name__ != "Activity":
+                        if field.related_model.__name__ == "People":
+                            ent1_fields.append(field.name + "_id__first_name")
+                            ent1_fields.append(field.name + "_id__last_name")
+                        else:
+                            ent1_fields.append(field.name + "_id__name")
+                else:
+                    if field.many_to_many:
+                        if field.related_model.__name__ != "Activity":
+                            if field.related_model.__name__ == "People":
+                                ent1_fields.append(field.name + "__first_name")
+                                ent1_fields.append(field.name + "__last_name")
+                            else:
+                                ent1_fields.append(field.name + "__name")
+            else:
+                if field.name!="position":
+                    ent1_fields.append(field.name)
+
+    print("\nCheck query")
+    print(ent1_fields)
+    columns = ent1_fields
+
+    # data_types.append(type(ent1_fields).__name__)
+    # data_filters.append("#select_filter")
+
+    queryset_values.append(entity_model.objects.all().values_list(*ent1_fields))#[entry for entry in queryset1]
+    # print("\nCheck second", queryset_values[0])
+
+    for ent1 in querysets[0]:
+        #querysets.append(ent1.activity_set.all())
+        fields=['name']
+        # print("#CHECKING ENTITY")
+        # print(ent1)
+        final_query_values=ent1.activity_set.all().values_list(*fields)
+        # print("\nFinal query values:")
+        # print(final_query_values)
+        for result in final_query_values:
+            # print(result)
+            # print("******")
+            # print(queryset_values[0][ent1_count])
+            rows.append(copy.copy(queryset_values[0][ent1_count]))
+            # print(rows[row])
+            # print(result[result])
+            rows[row] = rows[row] + result
+            # for field in result:
+            #     rows[row]= rows[row] + result[field]
+            # print(rows)
+            row = row + 1
+        # print("#######")
+        ent1_count = ent1_count + 1
+        #ent1_values = queryset_values[1][ent1_count]
+
+    query_values = [entry for entry in rows]
+    #print("\nCheck final data\n",query_values)
+
+    columns.append('activity_name')
     # columns = fields
-    # print(type(query_values[0]))
-
     for column in columns:
         data_types.append(type(column).__name__)
         data_filters.append("#select_filter")
+    print(data_types)
+
     for value in query_values:
-        # print(value)
-        json_value={'id':row, 'data':value}
-        # print(type(value))
-        # print(value)
-        # print(json_value)
+        json_value = {'id': row, 'data': value}
         json_data.append(json_value)
-        # print(value.values())
         row = row + 1
+
+    json_data_no_repeated = [i for n, i in enumerate(json_data) if i not in json_data[n + 1:]]#delete possible duplicated rows in the query
+
+    print("CHECKING FILTER")
+    print(data_filters)
 
     data = {
         'columns':columns,
         'types':list(data_types),
         'filters':list(data_filters),
-        'data':{'rows': json_data}
+        'data':{'rows': json_data_no_repeated}
     }
-    # print(data)
     return JsonResponse(data)
 
 def AggregateFocusArea(data):
@@ -308,16 +455,17 @@ def get_subtable(request):
     querysets = []
     queryset_values = []
 
-    print("\nModel: ", entity_models[0])
+    #print("\nModel: ", entity_models[0])
 
     querysets.append(entity_models[0].objects.all())
     # if entity_models[0].__name__!= "ActivityType":
     #     querysets.append(entity_models[0].objects.all())#objects.all().prefetch_related('activity_set')
     # else:
     #     querysets.append(entity_models[0].objects.values('name'))
-    print("\nCheck model 1: ")
-    print(querysets)
-    print("Pass")
+
+    # print("\nCheck model 1: ")
+    # print(querysets)
+    # print("Pass")
 
     #ent1_fields = [field for field in entity_models[0]._meta.get_fields() if type(field).__name__!="AutoField"]
     #print(ent1_fields)
@@ -343,12 +491,16 @@ def get_subtable(request):
                             else:
                                 ent1_fields.append(field.name + "__name")
             else:
-                ent1_fields.append(field.name)
+                if field.name != "position":
+                    ent1_fields.append(field.name)
 
     print("\nCheck query")
-
     print(ent1_fields)
-    columns.append(ent1_fields)
+    columns = ent1_fields
+
+    # data_types.append(type(ent1_fields).__name__)
+    # data_filters.append("#select_filter")
+
     queryset_values.append(entity_models[0].objects.all().values_list(*ent1_fields))#[entry for entry in queryset1]
     # print("\nCheck second", queryset_values[0])
 
@@ -366,9 +518,15 @@ def get_subtable(request):
                 if(rel_type_entities[i]=="f"):
                     fields.append(entities[i].lower() + "_id__name")
                     print(entities[i].lower() + "_id__name")
+
+            fields.append("name")
+            print("#CHECKING ENTITY")
+            print(ent1)
             final_query_values=ent1.activity_set.all().values_list(*fields)
             print("\nFinal query values:")
             print(final_query_values)
+
+
             for result in final_query_values:
                 print(result)
                 print("******")
@@ -386,9 +544,13 @@ def get_subtable(request):
             #ent1_values = queryset_values[1][ent1_count]
 
     query_values = [entry for entry in rows]
-    print("\nCheck final data\n",query_values)
+    #print("\nCheck final data\n",query_values)
 
-    columns.append(fields)
+    print("#checking fields")
+    print(fields)
+    columns = columns + fields
+    columns[len(columns)-1] = 'activity_name'
+    print(columns)
     # columns = fields
     for column in columns:
         data_types.append(type(column).__name__)
@@ -413,6 +575,9 @@ def get_subtable(request):
     #     row = row + 1
 
     json_data_no_repeated = [i for n, i in enumerate(json_data) if i not in json_data[n + 1:]]#delete possible duplicated rows in the query
+
+    print("CHECKING FILTER")
+    print(data_filters)
 
     data = {
         'columns':columns,

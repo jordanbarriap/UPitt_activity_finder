@@ -178,6 +178,7 @@ class Activity(models.Model):
     #idLocation = models.ForeignKey(Location, on_delete=models.CASCADE, null = True)
     locations = models.ManyToManyField(Location)#, related_name="associated_location")
     #idUnit = models.ForeignKey(Unit, on_delete=models.CASCADE, null = True)
+    schools = models.ManyToManyField(School)
     units = models.ManyToManyField(Unit)#,related_name="associated_unit")
     #idPopulation = models.ForeignKey(Population, on_delete=models.CASCADE, null = True)
     populations = models.ManyToManyField(Population)#, related_name="associated_population")
