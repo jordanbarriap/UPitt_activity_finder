@@ -24,7 +24,6 @@ class People(models.Model):
     def __str__(self):
         return self.first_name + " " + self.last_name
 
-
 class FocusArea(models.Model):
     idFocusArea = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)

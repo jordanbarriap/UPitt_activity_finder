@@ -192,6 +192,9 @@ def get_filters(request):
 #for applying the filter
 def get_table(request):
     entity = request.GET.get('entity', None)
+    outcome = request.GET.get('outcome',None)
+    details = request.GET.get('details', None)
+    print(outcome)
     print("Testing gettable: ",entity)
     entity_model = apps.get_model(app_label='activity_finder', model_name=entity)
 
@@ -249,8 +252,18 @@ def get_table(request):
     for ent1 in querysets[0]:
         #querysets.append(ent1.activity_set.all())
         fields=['name']
-        # print("#CHECKING ENTITY")
-        # print(ent1)
+        if outcome=="true":
+            fields.append("outcomes")
+        if details=="true":
+            if entity_model.__name__!="ActivityType":
+                fields.append("activitytype__name")
+            fields.append("description")
+            fields.append("happening")
+            fields.append("people_id__first_name")
+            fields.append("people_id__last_name")
+            fields.append("people_id__email")
+        # print("#CHECKING fields")
+        # print(fields)
         final_query_values=ent1.activity_set.all().values_list(*fields)
         # print("\nFinal query values:")
         # print(final_query_values)
@@ -274,6 +287,16 @@ def get_table(request):
     #print("\nCheck final data\n",query_values)
 
     columns.append('activity_name')
+    if outcome == "true":
+        columns.append("outcomes")
+    if details == "true":
+        if entity_model.__name__!="ActivityType":
+            columns.append("activity_type")
+        columns.append("description")
+        columns.append("happening")
+        columns.append("contact_first_name")
+        columns.append("contact_last_name")
+        columns.append("contact_email")
     # columns = fields
     for column in columns:
         data_types.append(type(column).__name__)
@@ -399,12 +422,19 @@ def get_subfilters(request):
 @login_required
 #for applying the filter
 def get_subtable(request):
+    outcome = request.GET.get('outcome', None)
+    details = request.GET.get('details', None)
+    print(outcome)
     num_entities = int(request.GET.get('num_entities', None))
     print("Check number of entities: ", num_entities)
     entities = []
+    flag_activity_type = "false"
     for i in range(0,num_entities):
         ent = 'entity' + str(i+1)
         entity = request.GET.get(ent, None)
+        if(entity == "ActivityType"):
+            flag_activity_type = "true"
+            #print("HHHHHHHHHHHHHHH")
         entities.append(entity)
     #entity1 = request.GET.get('entity1', None)
     #entity2 = request.GET.get('entity2', None)
@@ -418,6 +448,7 @@ def get_subtable(request):
     row = 0
     ent1_count=0
     rows = []
+    index_to_change_activity_name = 0
 
     entity_models = []
     for i in range(0,num_entities):
@@ -497,13 +528,14 @@ def get_subtable(request):
     print("\nCheck query")
     print(ent1_fields)
     columns = ent1_fields
-
+    index_to_change_activity_name = len(columns)
     # data_types.append(type(ent1_fields).__name__)
     # data_filters.append("#select_filter")
 
     queryset_values.append(entity_models[0].objects.all().values_list(*ent1_fields))#[entry for entry in queryset1]
     # print("\nCheck second", queryset_values[0])
 
+    check_first_iteration = True
     if rel_type_entities[0] != 'n':
         for ent1 in querysets[0]:
             #querysets.append(ent1.activity_set.all())
@@ -519,7 +551,22 @@ def get_subtable(request):
                     fields.append(entities[i].lower() + "_id__name")
                     print(entities[i].lower() + "_id__name")
 
+            if check_first_iteration == True:
+                index_to_change_activity_name = index_to_change_activity_name + len(fields)
+                check_first_iteration = False
+
             fields.append("name")
+            if outcome == "true":
+                fields.append("outcomes")
+            if details == "true":
+                if flag_activity_type != "true":
+                    fields.append("activitytype__name")
+                fields.append("description")
+                fields.append("happening")
+                fields.append("people_id__first_name")
+                fields.append("people_id__last_name")
+                fields.append("people_id__email")
+
             print("#CHECKING ENTITY")
             print(ent1)
             final_query_values=ent1.activity_set.all().values_list(*fields)
@@ -549,8 +596,10 @@ def get_subtable(request):
     print("#checking fields")
     print(fields)
     columns = columns + fields
-    columns[len(columns)-1] = 'activity_name'
-    print(columns)
+
+    columns[index_to_change_activity_name] = 'activity_name'
+
+    # print(columns)
     # columns = fields
     for column in columns:
         data_types.append(type(column).__name__)

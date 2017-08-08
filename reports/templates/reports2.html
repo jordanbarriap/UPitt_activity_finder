@@ -50,11 +50,15 @@
             <option value="{{ entity }}">{{ entity }}</option>
         {% endfor %}
     </select>
-
-     <!--</br>-->
-    <button disabled id="add-filter-btn" class="addlink object-tools" style="width:100px;height:50px; margin:0px; font-size: 15px;">
+    <input type="checkbox" id="outcome-cb" value="checked" style="margin-left:10px;"><label> Outcome</label>
+    <input type="checkbox" id="details-cb" value="checked" style="margin-left:10px;"><label> Activity Details</label>
+    </br>
+    <button disabled id="add-filter-btn" class="addlink object-tools" style="float:left;width:100px;height:50px; margin-top:10px; font-size: 15px; cursor: pointer; border: true; background-color: #7baec7;">
         <span class="glyphicon glyphicon-plus-sign">Add filter</span>
     </button>
+
+
+
 
     <!--<ul class="object-tools">-->
             <!--<li>-->
@@ -104,7 +108,7 @@
        $("#filters-div").empty();//Clean additional info filters if any
 
 
-       var jqxhr = $.get( "/admin/reports/get_table", {'entity': selected_entity}, function(data) {
+       var jqxhr = $.get( "/admin/reports/get_table", {'entity': selected_entity, 'outcome':document.getElementById("outcome-cb").checked, 'details':document.getElementById("details-cb").checked} , function(data) {
           var header = data.columns.join();
           mygrid.clearAll(true);
           mygrid=new dhtmlXGridObject('gridbox');
@@ -156,6 +160,8 @@
             });
 
             parameters["num_entities"]=Object.keys(parameters).length;
+            parameters["outcome"]=document.getElementById("outcome-cb").checked;
+            parameters["details"]=document.getElementById("details-cb").checked;
             console.log(parameters);
             selected_filter = this.value;
             //selected_field = this.value;
