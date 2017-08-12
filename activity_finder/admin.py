@@ -30,12 +30,26 @@ class ActivityModelAdmin(admin.ModelAdmin):
         models.CharField: {'widget': TextInput(attrs={'size':'50'})},
         models.TextField: {'widget': Textarea(attrs={'rows':4, 'cols':100})},
     }
+
+    search_fields = ('name',)
+
+    # def get_search_results(self, request, queryset, search_term):
+    #     queryset, use_distinct = super(ActivityModelAdmin, self).get_search_results(request, queryset, search_term)
+    #     try:
+    #         search_term_as_int = int(search_term)
+    #     except ValueError:
+    #         pass
+    #     else:
+    #         queryset |= self.model.objects.filter(age=search_term_as_int)
+    #     return queryset, use_distinct
+
 admin.site.register(Activity, ActivityModelAdmin)
 
 class PeopleModelAdmin(admin.ModelAdmin):
     list_display = ["first_name","last_name", "type"]
     list_display_links = ["first_name","last_name"]
     list_filter = ["type"]
+
 
 admin.site.register(People, PeopleModelAdmin)
 

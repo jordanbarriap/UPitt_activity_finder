@@ -206,8 +206,8 @@
 
     $("#pdf-btn").click(function(){
         //exporting to PDF by using the online export service
-        mygrid.toPDF("http://dhtmlxgrid.appspot.com/export/pdf");
+        <!--mygrid.toPDF("http://dhtmlxgrid.appspot.com/export/pdf");-->
+        mygrid.toPDF("file:///Library/apache-tomcat-6.0.45/webapps/grid-pdf-php/generate.php");
     });
-
 </script>
 {% endblock content%}
