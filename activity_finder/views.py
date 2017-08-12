@@ -5,9 +5,10 @@ import datetime
 from activity_finder.models import *
 
 def activity_finder(request):
-    a={}
-    a['activities']=Activity.objects.all()
-    a['locations']=Location.objects.all()
-    a['activitytypes']=ActivityType.objects.all()
-    a['acc']='accccccccccc'
-    return render(request, 'index.html', a)
+    data={}
+    data['activities']=Activity.objects.all()
+    data['locations']=Location.objects.all()
+    print(data['locations'])
+    data['activitytypes']=ActivityType.objects.all()
+
+    return render(request, 'index.html', data)
