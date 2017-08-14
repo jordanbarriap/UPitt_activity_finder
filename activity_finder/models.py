@@ -34,21 +34,26 @@ class FocusArea(models.Model):
 
 
 class Location(models.Model):
+
     idLocation = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     position = GeopositionField()
-    address = models.CharField(max_length=200, blank=True, null=True)
-    neighborhood = models.CharField(max_length=100, blank=True, null=True)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    county = models.CharField(max_length=100, blank=True, null=True)
-    state = models.CharField(max_length=100, blank=True, null=True)
-    country = models.CharField(max_length=100, blank=True, null=True)
+    address = models.CharField(max_length=200, blank=True, null=True, editable=False)
+    neighborhood = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    city = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    county = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    region = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    state = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    country = models.CharField(max_length=100, blank=True, null=True, editable=False)
     #activities = models.ManyToManyField(Activity)
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
+        REGIONS = {'Southwest PA': ['Lawrence', 'Butler', 'Armstrong', 'Indiana', 'Beaver', 'Allegheny', 'Washington',
+                                    'Westmoreland', 'Greene', 'Fayette']}
+
         pp = pprint.PrettyPrinter()
         geolocator = GoogleV3(api_key="AIzaSyCPqXhtFS9Fu0-sCptEPyrl7nknrVGQD2g")
         location = geolocator.reverse(str(self.position.latitude)+","+str(self.position.longitude))
@@ -62,40 +67,52 @@ class Location(models.Model):
 
         # Extract neighborhood information
         neighborhood_data = [d for d in address_components if "neighborhood" in d['types']]
-        neighborhood = neighborhood_data[0]["long_name"]
-        print("Neighborhood: "+neighborhood)
-        if neighborhood:
-            self.neighborhood = neighborhood
+        if len(neighborhood_data)>0:
+            neighborhood = neighborhood_data[0]["long_name"]
+            print("Neighborhood: "+neighborhood)
+            if neighborhood:
+                self.neighborhood = neighborhood
 
         # Extract city information
         city_data = [d for d in address_components if "locality" in d['types']]
-        city = city_data[0]["long_name"]
-        print("City: " + city)
-        if city:
-            self.city = city
+        if len(city_data) > 0:
+            city = city_data[0]["long_name"]
+            print("City: " + city)
+            if city:
+                self.city = city
 
         #Extract county information
         county_data = [d for d in address_components if "administrative_area_level_2" in d['types']]
-        county = county_data[0]["long_name"]
-        print("County: "+county)
-        if county:
-            self.county = county
-
-        #Extract region information (just for PA)
+        county_name = ""
+        if len(county_data)>0:
+            county = county_data[0]["long_name"]
+            county_name = county[:county.rfind(" ")]
+            print("County: "+county_name)
+            if county:
+                self.county = county_name
 
         # Extract state information
         state_data = [d for d in address_components if "administrative_area_level_1" in d['types']]
-        state = state_data[0]["long_name"]
-        print("State: " + state)
-        if state:
-            self.state = state
+        if len(state_data)>0:
+            state = state_data[0]["long_name"]
+            print("State: " + state)
+            if state:
+                self.state = state
+                if state=="Pennsylvania":
+                    county_name = county[:county.rfind(" ")]
+                    print(county_name)
+                    if county_name in REGIONS["Southwest PA"]:
+                        self.region =  "Southwest PA"
+                    else:
+                        self.region = "Not Southwest PA"
 
         # Extract country information
         country_data = [d for d in address_components if "country" in d['types']]
-        country = country_data[0]["long_name"]
-        print("Country: " + country)
-        if country:
-            self.country = country
+        if len(country_data)>0:
+            country = country_data[0]["long_name"]
+            print("Country: " + country)
+            if country:
+                self.country = country
 
         super(Location,self).save(*args, **kwargs)  # Call the "real" save() method.
     #    do_something_else()

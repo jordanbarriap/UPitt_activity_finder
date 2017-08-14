@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="65e33904-aa01-4db2-bc7c-bea1728349cc" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/admin/change_form.html" afterPath="$PROJECT_DIR$/templates/admin/change_form.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/activity_finder/models.py" afterPath="$PROJECT_DIR$/activity_finder/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/activity_finder/templates/index.html" afterPath="$PROJECT_DIR$/activity_finder/templates/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/activity_finder/views.py" afterPath="$PROJECT_DIR$/activity_finder/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,7 +24,7 @@
         <entry file="file://$PROJECT_DIR$/reports/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-3739">
-              <caret line="38" column="22" lean-forward="true" selection-start-line="38" selection-start-column="22" selection-end-line="38" selection-end-column="22" />
+              <caret line="38" column="22" lean-forward="false" selection-start-line="38" selection-start-column="22" selection-end-line="38" selection-end-column="22" />
               <folding>
                 <element signature="e#12157#13047#0" expanded="false" />
                 <element signature="e#13083#14318#0" expanded="false" />
@@ -34,9 +37,23 @@
         <entry file="file://$PROJECT_DIR$/activity_finder/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="443">
-              <caret line="192" column="24" lean-forward="true" selection-start-line="192" selection-start-column="24" selection-end-line="192" selection-end-column="24" />
+              <caret line="209" column="24" lean-forward="false" selection-start-line="209" selection-start-column="24" selection-end-line="209" selection-end-column="24" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
+                <marker date="1502585440000" expanded="true" signature="953:4549" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="4400:4549" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="4579:4722" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="4697:4722" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="4750:5007" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="4982:5007" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5041:5238" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5213:5238" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5282:5489" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5464:5489" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5519:5713" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5688:5713" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5753:6004" ph="..." />
+                <marker date="1502585440000" expanded="true" signature="5979:6004" ph="..." />
               </folding>
             </state>
           </provider>
@@ -46,17 +63,17 @@
         <entry file="file://$PROJECT_DIR$/activity_finder/admin.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="445">
-              <caret line="44" column="0" lean-forward="true" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+              <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="reports2.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="reports2.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/reports/templates/reports2.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2359">
-              <caret line="210" column="7" lean-forward="true" selection-start-line="206" selection-start-column="3" selection-end-line="210" selection-end-column="7" />
+            <state relative-caret-position="484">
+              <caret line="131" column="26" lean-forward="false" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -72,7 +89,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="change_form.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="change_form.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/admin/change_form.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="373">
@@ -122,9 +139,9 @@
       <find>queryset_values</find>
       <find>dhtmlXGridObject</find>
       <find>dhtmlxGrid</find>
-      <find>gridbox</find>
       <find>image</find>
       <find>pdf-btn</find>
+      <find>gridbox</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -759,7 +776,7 @@
     <entry file="file://$PROJECT_DIR$/activity_finder/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="445">
-          <caret line="44" column="0" lean-forward="true" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -772,20 +789,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reports/templates/reports2.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2359">
-          <caret line="210" column="7" lean-forward="true" selection-start-line="206" selection-start-column="3" selection-end-line="210" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/activity_finder/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="443">
-          <caret line="192" column="24" lean-forward="true" selection-start-line="192" selection-start-column="24" selection-end-line="192" selection-end-column="24" />
+          <caret line="209" column="24" lean-forward="false" selection-start-line="209" selection-start-column="24" selection-end-line="209" selection-end-column="24" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
+            <marker date="1502585440000" expanded="true" signature="953:4549" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="4400:4549" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="4579:4722" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="4697:4722" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="4750:5007" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="4982:5007" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5041:5238" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5213:5238" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5282:5489" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5464:5489" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5519:5713" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5688:5713" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5753:6004" ph="..." />
+            <marker date="1502585440000" expanded="true" signature="5979:6004" ph="..." />
           </folding>
         </state>
       </provider>
@@ -811,7 +834,7 @@
     <entry file="file://$PROJECT_DIR$/reports/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3739">
-          <caret line="38" column="22" lean-forward="true" selection-start-line="38" selection-start-column="22" selection-end-line="38" selection-end-column="22" />
+          <caret line="38" column="22" lean-forward="false" selection-start-line="38" selection-start-column="22" selection-end-line="38" selection-end-column="22" />
           <folding>
             <element signature="e#12157#13047#0" expanded="false" />
             <element signature="e#13083#14318#0" expanded="false" />
@@ -826,6 +849,14 @@
           <folding>
             <element signature="n#style#0;n#span#0;n#button#0;n#li#1;n#ul#0;n#div#1;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/templates/reports2.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="484">
+          <caret line="131" column="26" lean-forward="false" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="26" />
+          <folding />
         </state>
       </provider>
     </entry>
