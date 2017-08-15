@@ -47,18 +47,16 @@
     <select id="entities-cb">
         <option disabled selected value> -- Select a value -- </option>
         {% for entity in entities %}
+            {% if entity != "Activity"%}
             <option value="{{ entity }}">{{ entity }}</option>
+            {% endif %}
         {% endfor %}
     </select>
     <input type="checkbox" id="outcome-cb" value="checked" style="margin-left:10px;"><label> Outcome</label>
     <input type="checkbox" id="details-cb" value="checked" style="margin-left:10px;"><label> Activity Details</label>
     </br>
-    <button disabled id="add-filter-btn" class="addlink object-tools" style="float:left;width:100px;height:50px; margin-top:10px; font-size: 15px; cursor: pointer; border: true; background-color: #7baec7;">
-        <span class="glyphicon glyphicon-plus-sign">Add filter</span>
-    </button>
-
-
-
+    <button disabled id="add-filter-btn" class="button button1">Add filter</button>
+    <!--<button disabled id="add-filter-btn" style="float:left;width:100px;height:50px; margin-top:10px; font-size: 15px; cursor: pointer; border: true; background-color: #7baec7;">Add filter</button>-->
 
     <!--<ul class="object-tools">-->
             <!--<li>-->
@@ -112,10 +110,24 @@
           var header = data.columns.join();
           mygrid.clearAll(true);
           mygrid=new dhtmlXGridObject('gridbox');
+          <!--mygrid.enableAutoWidth(true);-->
           //mygrid.setHeader("Sales,Book title,Author,Price");//the headers of columns
-          mygrid.setHeader(header);//the headers of columns
+
+          var temp = header +"";
+          var partsOfStr = temp.split(',');
+          var strHeader = "Hung Chau";
+          var today = new Date();
+          var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
+          var strHeader = "Filtered by " +selected_entity+" ("+date+")";
+          for( i =1 ;  i < partsOfStr.length; i++)
+                strHeader = strHeader+",#cspan";
+          <!--console.log(strHeader);-->
+
+          mygrid.setHeader(strHeader);//the headers of columns
           var filter = data.filters.join();
+          mygrid.attachHeader(header);
           mygrid.attachHeader(filter);
+                    <!--mygrid.attachFooter(filter);-->
           //mygrid.setInitWidths("100,250,150,100");          //the widths of columns
           //mygrid.setColAlign("right,left,left,left");       //the alignment of columns
           //mygrid.setColTypes("ro,ed,ed,ed");                //the types of columns
@@ -123,7 +135,7 @@
           mygrid.setColSorting(data.types.join());          //the sorting types
           mygrid.init();      //finishes initialization and renders the grid on the page
           mygrid.parse(data.data,"json"); //takes the name and format of the data source
-          console.log(data);
+          <!--console.log(data);-->
 
           $("#add-filter-btn").prop('disabled', false); //enable the addition of filters
 
@@ -151,6 +163,7 @@
         $("#filter"+current_filter).change(function(){
             var parameters = {};
             parameters["entity1"]=selected_entity
+            var filterNames = ""
             var n_ent = 2
             $('.filter  option:selected').each(function() {
                 if($(this).text()!=""){
@@ -173,11 +186,28 @@
                 data: parameters,
                 success: function (new_data) {
                   var new_header = new_data.columns.join();
-                  console.log(new_header)
 
-                  //mygrid.setHeader("Sales,Book title,Author,Price");//the headers of columns
-                  mygrid.setHeader(new_header);//the headers of columns
+                  var temp = new_header +"";
+                  var partsOfStr = temp.split(',');
+                  var today = new Date();
+                  var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
+                  var filterNames = "";
+                  for (i = 1; i < n_ent; i++)
+                  {
+                        if(i + 1  < n_ent)
+                            filterNames = filterNames + parameters["entity"+(i)]+" - ";
+                        if(i + 1 == n_ent)
+                            filterNames = filterNames + parameters["entity"+(i)];
+                  }
+                  var strHeader = "Filtered by " +filterNames+" ("+date+")";
+                  for( i =1 ;  i < partsOfStr.length; i++)
+                        strHeader = strHeader+",#cspan";
+                  <!--console.log(strHeader);-->
+
+                  mygrid.setHeader(strHeader);//the headers of columns
+
                   var new_filter = new_data.filters.join();
+                  mygrid.attachHeader(new_header);
                   mygrid.attachHeader(new_filter);
                   //mygrid.setInitWidths("100,250,150,100");          //the widths of columns
                   //mygrid.setColAlign("right,left,left,left");       //the alignment of columns
@@ -201,13 +231,30 @@
 
     $("#xls-btn").click(function(){
         //exporting to Excel by using the online export service
-        mygrid.toExcel("http://dhtmlxgrid.appspot.com/export/excel");
+        <!--var today = new Date();-->
+        <!--var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();-->
+         <!--var newId = "rowDate";-->
+        <!--mygrid.addRow(newId,"Report date:\r\n"+date);-->
+         <!--mygrid.enableColSpan(true);-->
+        <!--mygrid.setColspan(newId,0,2);-->
+        <!--mygrid.addRow("rowBlank","");-->
+
+        mygrid.toExcel("http://dhtmlxgrid.appspot.com/export/excel", 'bw');
+        <!--mygrid.deleteRow(newId);-->
+        <!--mygrid.deleteRow("rowBlank");-->
     });
 
     $("#pdf-btn").click(function(){
-        //exporting to PDF by using the online export service
-        <!--mygrid.toPDF("http://dhtmlxgrid.appspot.com/export/pdf");-->
-        mygrid.toPDF("file:///Library/apache-tomcat-6.0.45/webapps/grid-pdf-php/generate.php");
+        <!--var today = new Date();-->
+        <!--var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();-->
+        <!--var newId = "rowDate";-->
+        <!--mygrid.addRow(newId,"Report date:\r\n"+date);-->
+        <!--mygrid.enableColSpan(true);-->
+        <!--mygrid.setColspan(newId,0,2);-->
+        <!--//exporting to PDF by using the online export service-->
+        mygrid.toPDF("http://dhtmlxgrid.appspot.com/export/pdf", 'bw');
+        <!--mygrid.deleteRow(newId);-->
+        <!--mygrid.toPDF("file:///Library/apache-tomcat-6.0.45/webapps/grid-pdf-php/generate.php");-->
     });
 </script>
 {% endblock content%}
