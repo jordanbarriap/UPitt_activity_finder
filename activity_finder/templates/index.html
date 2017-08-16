@@ -1,28 +1,29 @@
+{% load static %}
 <html>
 <head>
     <title>University of Pittsburgh</title>
     <!-- css -->
-    <link rel="stylesheet" type="text/css" href="../static/css/map_css.css" />
+    <link rel="stylesheet" type="text/css" href="{% static "/css/activity_finder.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "/css/map.css" %}" />
     <!--<link rel="stylesheet" type="text/css" href="../static/css/style9.css" />-->
     <!-- jquery -->
     <script src="../static/js/jquery-1.11.3.min.js" type="text/javascript"></script>
-    <!-- map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
-          integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
-          crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
-            integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
-            crossorigin=""></script>
-    <!--<script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet'/>-->
+
     <!-- bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+    <!-- bootstrap for select -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/i18n/defaults-*.min.js"></script>-->
+
+
     <!-- dataTable -->
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
@@ -30,18 +31,42 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <h1 class="title-words" color="#E7EA9A">University of Pittsburgh 2</h1>
+        <div class="col-md-12" id="header">
+            <img id="header-logo" src="{% static "/image/pitt-logo-bluebkg.gif" %}" alt="University of Pittsburgh" />
+            <!--<h1 class="title-words" color="#E7EA9A">University of Pittsburgh</h1>-->
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" id="filters">
+            Search:<input type="text" id="searchkeywords" onkeyup="searchKeywords()">
             Hiding Past:<input type="checkbox" id="happen_filter" onclick="filterHappen()">
-            Sort by:
-            <input type="button" class="sortbystarttime"  value="StartTime">
-            <input type="button" class="sortbyendtime"  value="EndTime">
-            <input type="button" class="sortbyname"  value="Name">
-            Location:
+            <div class="filter">
+                Activity Type:<br>
+                <select id="selectActivity" class="form-control" onchange="searchActivityType()">
+                    <option value="">All</option>
+                    {% for act in activitytypes %}
+                    <!--<div class="item">-->
+                        <option class="item" value={{ act.name }}>{{ act.name }}</option>
+                    <!--</div>-->
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter">
+                Sort by:<br>
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-secondary active">
+                    <input type="radio" id="sortbystartdate" name="sortbystartdate" checked> Start date
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input type="radio" id="sortbyenddate" name="sortbyenddate"> End date
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input type="radio" id="sortbyname" name="sortbyname"> Name
+                  </label>
+                </div>
+            </div>
+
+            <!--Location:
             <select id="selectLocation" onchange="searchLocation()">
                 <option value="">ALL</option>
                 {% for act in locations %}
@@ -49,17 +74,38 @@
                     <option value={{ act.name }}>{{ act.name }}</option>
                 </div>
                 {% endfor %}
-            </select>
-            Activity Type:
-            <select id="selectActivity" onchange="searchActivityType()">
-                <option value="">ALL</option>
-                {% for act in activitytypes %}
-                <div class="item">
-                    <option value={{ act.name }}>{{ act.name }}</option>
+            </select>-->
+
+            <div id="locations-filter">
+                <div class="filter">
+                    State:<br>
+                    <select id="selectState" class="form-control" onchange="searchState(this)">
+                        <option value="">All</option>
+                    </select>
                 </div>
-                {% endfor %}
-            </select>
-            Search:<input type="text" id="searchkeywords" onkeyup="searchKeywords()">
+                <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
+                <div class="filter">
+                    County:<br>
+                    <select id="selectCounty" class="form-control" onchange="searchCounty(this)">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
+                <div class="filter">
+                    City:<br>
+                    <select id="selectCity" class="form-control" onchange="searchCity(this)">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
+                <div class="filter">
+                    Neighborhood:<br>
+                    <select id="selectNeighborhood" class="form-control"  onchange="searchNeighborhood(this)">
+                        <option value="">All</option>
+                    </select>
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="row">
@@ -75,18 +121,20 @@
                 <tr>
                     <td>
                         <div class="item">
-                            <h3>{{ act.name }}</h3>
+                            <span class="title">{{ act.name }}</span>
+                            <p class="description">
+                                <br>
+                                <i>{{ act.description }}</i><br><br>
+                                <span class="subtitle">Location(s):</span>  {% for location in act.locations.all %}
+                                            {{ location.name }} {% if not forloop.last %},{% endif %}
+                                         {% endfor %}<br>
+                                <span class="subtitle">Category:</span>  {{ act.activitytype }}<br>
+                                <span class="subtitle">Start date:</span>  {{ act.start_date }}<br>
+                                <span class="subtitle">End date:</span>  {{ act.end_date }}<br>
+                            </p>
                             <input type="hidden" name="locations" value="{% for location in act.locations.all %}{{ location.idLocation}};{% endfor %}">
+
                         </div>
-                        <p hidden="hidden">
-                            Description:{{ act.description }}<br><br>
-                            Location:{% for location in act.locations.all %}
-                                        {{ location.name}};
-                                     {% endfor %}<br><br>
-                            ActivityType:{{ act.activitytype }}<br><br>
-                            Start Date:{{ act.start_date }}<br><br>
-                            End Date:{{ act.end_date }}<br>
-                        </p>
 
                     </td>
                     <td>
@@ -130,11 +178,23 @@
 <script>
 
           var markers_array = new Array();
+          var states_array = new Array();
+          var counties_array = new Array();
+          var cities_array = new Array();
+          var neighborhoods_array = new Array();
+          var states_data_array = new Array();
+          var counties_data_array = new Array();
+          var cities_data_array = new Array();
+          var neighborhoods_data_array = new Array();
           var map;
+          var state_polygon,county_polygon,city_polygon,neighborhood_polygon;
+
           $('.item').on("click", function () {
-                 $(this).next().slideToggle(100);
+                 var description = $(this).find(".description");
+                 description.slideDown(100);
                  $(this).attr("class","item active");
-                 $('p').not($(this).next()).slideUp('fast');
+                 $('.description').not(description).slideUp(100);
+
                  var markers_ids_str = $(this).find("input[name='locations']").val();
                  markers_ids_str = markers_ids_str.substring(0,markers_ids_str.length-1);
                  var markers_ids = markers_ids_str.split(";");
@@ -146,20 +206,19 @@
 
                  google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
                     //this.setZoom(map.getZoom()-1);
-                    console.log(this.getZoom());
                     if (this.getZoom() > 15) {
                         this.setZoom(15);
                     }
                  });
 
                  map.fitBounds(bounds);
-                 console.log(markers_ids);
                  highlightMarkers(markers_ids);
 
           });
           <!--manipulate the datatable-->
           $(document).ready(
               function () {
+
                     $('#table_id').DataTable({
                         "sDom": 'trp',
                         "columns": [
@@ -173,10 +232,58 @@
                             { "visible": false }
                          ],
                     });
-               }
+                    {% for act in activities %}
+                        {% for location in act.locations.all %}
+                            if (states_array.indexOf("{{location.state}}")==-1){
+                                states_array.push("{{location.state}}");
+                                $("#selectState").append('<option value="{{location.state}}">{{location.state}}</option>');
+                                states_data_array["{{location.state}}"]={counties:[]};
+                            }
+                            if (counties_array.indexOf("{{location.county}}")==-1){
+                                counties_array.push("{{location.county}}");
+                                $("#selectCounty").append('<option value="{{location.county}}">{{location.county}}</option>');
+                                counties_data_array["{{location.county}}"]={state: "{{location.state}}"};
+
+                                if(states_data_array["{{location.state}}"].counties== undefined){
+                                    states_data_array["{{location.state}}"].counties = ["{{location.county}}"];
+                                }else{
+                                    states_data_array["{{location.state}}"].counties.push("{{location.county}}");
+                                }
+
+                            }
+                            if (cities_array.indexOf("{{location.city}}")==-1){
+                                cities_array.push("{{location.city}}");
+                                $("#selectCity").append('<option value="{{location.city}}">{{location.city}}</option>');
+                                cities_data_array["{{location.city}}"]={county: "{{location.county}}", state: "{{location.state}}"};
+
+                                if(counties_data_array["{{location.county}}"].cities== undefined){
+                                    counties_data_array["{{location.county}}"].cities = ["{{location.city}}"];
+                                }else{
+                                    counties_data_array["{{location.county}}"].cities.push("{{location.city}}");
+                                }
+                            }
+                            if (neighborhoods_array.indexOf("{{location.neighborhood}}")==-1){
+                                neighborhoods_array.push("{{location.neighborhood}}");
+                                $("#selectNeighborhood").append('<option value="{{location.neighborhood}}">{{location.neighborhood}}</option>');
+                                neighborhoods_data_array["{{location.neighborhood}}"]={city: "{{location.city}}", county: "{{location.county}}", state: "{{location.state}}"};
+                                console.log( cities_data_array["{{location.city}}"]);
+
+                                if(cities_data_array["{{location.city}}"].neighborhoods == undefined){
+                                    cities_data_array["{{location.city}}"].neighborhoods = ["{{location.neighborhood}}"];
+                                }else{
+                                    cities_data_array["{{location.city}}"].neighborhoods.push("{{location.neighborhood}}");
+                                }
+                            }
+                        {% endfor %}
+                    {% endfor %}
+                    console.log(states_data_array);
+                    console.log(counties_data_array);
+                    console.log(cities_data_array);
+
+              }
           );
           var nameFlag=false;
-          $('.sortbyname').click(function(){
+          $('input:radio[name="sortbyname"]').change(function(){
                if(nameFlag)
                {
                     $('#table_id').dataTable().fnSort([[0, 'asc']]);
@@ -187,9 +294,9 @@
                }
                nameFlag=!nameFlag;
           });
-          var startTimeFlag=false;
-          $('.sortbystarttime').click(function(){
-               if(startTimeFlag)
+          var startDateFlag=false;
+          $('input:radio[name="sortbystartdate"]').change(function(){
+               if(startDateFlag)
                {
                     $('#table_id').dataTable().fnSort([[1, 'asc']]);
                }
@@ -197,11 +304,11 @@
                {
                     $('#table_id').dataTable().fnSort([[1, 'des']]);
                }
-               startTimeFlag=!startTimeFlag;
+               startDateFlag=!startDateFlag;
           });
-          var endTimeFlag=false;
-          $('.sortbyendtime').click(function(){
-               if(endTimeFlag)
+          var endDateFlag=false;
+          $('input:radio[name="sortbyenddate"]').change(function(){
+               if(endDateFlag)
                {
                     $('#table_id').dataTable().fnSort([[2, 'asc']]);
                }
@@ -209,7 +316,7 @@
                {
                     $('#table_id').dataTable().fnSort([[2, 'des']]);
                }
-               endTimeFlag=!endTimeFlag;
+               endDateFlag=!endDateFlag;
           });
           function searchLocation()
           {
@@ -237,6 +344,256 @@
                 var obj=document.getElementById("happen_filter");
                 $('#table_id').DataTable().draw();
           }
+          function searchState(option){
+            if(state_polygon){
+                state_polygon.setMap(null);
+            }
+            if(county_polygon){
+                county_polygon.setMap(null);
+            }
+            if(city_polygon){
+                city_polygon.setMap(null);
+            }
+            if(neighborhood_polygon){
+                neighborhood_polygon.setMap(null);
+            }
+            if($(option).val()!=""){
+                var state = $(option).val();
+                var lati, long, coord, final_coord;
+                var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+state+"&polygon_geojson=1&format=json", function(data) {
+                  if(data.length>0){
+                      var state_data = data[0];
+                      var paths = [];
+                      var state_coords = state_data.geojson.coordinates[0];
+                      var polygon_coords = new Array();
+                      for (var i = 0; i < state_coords.length; i++) {
+                        coord = state_coords[i];
+                        lati = parseFloat(coord[1]);
+                        long = parseFloat(coord[0]);
+                        final_coord = {lat: lati,lng: long};
+                        polygon_coords.push({lat:lati,lng:long});
+                      }
+
+                       // Construct the polygon.
+                       state_polygon = new google.maps.Polygon({
+                          paths: polygon_coords,
+                          strokeColor: '#cdb87d',
+                          strokeOpacity: 0.8,
+                          strokeWeight: 1.5,
+                          fillColor: '#cdb87d',
+                          fillOpacity: 0.3
+                        });
+
+                        state_polygon.setMap(map);
+
+                        map.fitBounds(state_polygon.getBounds());
+
+                        $('#selectCounty option[value=""]').prop('selected', 'selected');
+                        $('#selectCity option[value=""]').prop('selected', 'selected');
+                        $('#selectNeighborhood option[value=""]').prop('selected', 'selected');
+
+                  }
+                })
+                  .fail(function() {
+                    console.log( "error" );
+                  });
+             }
+          }
+          function searchCounty(option){
+            if(state_polygon){
+                state_polygon.setMap(null);
+            }
+            if(county_polygon){
+                county_polygon.setMap(null)
+            }
+            if(city_polygon){
+                city_polygon.setMap(null);
+            }
+            if(neighborhood_polygon){
+                neighborhood_polygon.setMap(null);
+            }
+            if($(option).val()!=""){
+                var county = $(option).val();
+                var lati, long, coord, final_coord;
+                var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+county+" County&polygon_geojson=1&format=json", function(data) {
+                  if(data.length>0){
+                      var county_data = data[0];
+                      var paths = [];
+                      var county_coords = county_data.geojson.coordinates[0];
+                      var polygon_coords = new Array();
+                      for (var i = 0; i < county_coords.length; i++) {
+                        coord = county_coords[i];
+                        lati = parseFloat(coord[1]);
+                        long = parseFloat(coord[0]);
+                        final_coord = {lat: lati,lng: long};
+                        polygon_coords.push({lat:lati,lng:long});
+                      }
+
+                       // Construct the polygon.
+                       county_polygon = new google.maps.Polygon({
+                          paths: polygon_coords,
+                          strokeColor: '#cdb87d',
+                          strokeOpacity: 0.8,
+                          strokeWeight: 1.5,
+                          fillColor: '#cdb87d',
+                          fillOpacity: 0.3
+                        });
+
+                        county_polygon.setMap(map);
+
+                        map.fitBounds(county_polygon.getBounds());
+
+                        var state = counties_data_array[$(option).val()].state;
+                        $('#selectState option[value="'+state+'"]').prop('selected', 'selected');
+                        //Populates the list of cities according to the county that was selected by the user
+                        $('#selectCity option').each(function(){
+                            var city = $(this).val().toString();
+                            if (city!="" && counties_data_array[county].cities.indexOf(city)==-1){
+                                $(this).hide();
+                            }else{
+                                $(this).show();
+                            }
+                        });
+                        $('#selectCity option[value=""]').prop('selected', 'selected');
+                        $('#selectNeighborhood option[value=""]').prop('selected', 'selected');
+
+                  }
+                })
+                  .fail(function() {
+                    console.log( "error" );
+                  });
+             }
+          }
+          function searchCity(option){
+            if(state_polygon){
+                state_polygon.setMap(null);
+            }
+            if(county_polygon){
+                county_polygon.setMap(null);
+            }
+            if(city_polygon){
+                city_polygon.setMap(null);
+            }
+            if(neighborhood_polygon){
+                neighborhood_polygon.setMap(null);
+            }
+            if($(option).val()!=""){
+                var city = $(option).val();
+                var lati, long, coord, final_coord;
+                var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+city+","+cities_data_array[city].county+","+cities_data_array[city].state+"&polygon_geojson=1&format=json", function(data) {
+                  if(data.length>0){
+                      var city_data = data[0];
+                      var paths = [];
+                      var city_coords = city_data.geojson.coordinates[0];
+                      var polygon_coords = new Array();
+                      for (var i = 0; i < city_coords.length; i++) {
+                        coord = city_coords[i];
+                        lati = parseFloat(coord[1]);
+                        long = parseFloat(coord[0]);
+                        final_coord = {lat: lati,lng: long};
+                        polygon_coords.push({lat:lati,lng:long});
+                      }
+
+                       // Construct the polygon.
+                       city_polygon = new google.maps.Polygon({
+                          paths: polygon_coords,
+                          strokeColor: '#cdb87d',
+                          strokeOpacity: 0.8,
+                          strokeWeight: 1.5,
+                          fillColor: '#cdb87d',
+                          fillOpacity: 0.3
+                        });
+
+                        city_polygon.setMap(map);
+
+                        map.fitBounds(city_polygon.getBounds());
+
+                        var state = cities_data_array[$(option).val()].state;
+                        var county = cities_data_array[$(option).val()].county;
+
+                        $('#selectState option[value="'+state+'"]').prop('selected', 'selected');
+                        $('#selectCounty option[value="'+county+'"]').prop('selected', 'selected');
+                        $('#selectNeighborhood option').each(function(){
+                            var neighborhood = $(this).val().toString();
+                            if (neighborhood!="" && cities_data_array[city].neighborhoods.indexOf(neighborhood)==-1){
+                                $(this).hide();
+                            }else{
+                                $(this).show();
+                            }
+                        });
+                        $('#selectNeighborhood option[value=""]').prop('selected', 'selected');
+
+                  }
+                })
+                  .fail(function() {
+                    console.log( "error" );
+                  });
+             }
+          }
+
+          function searchNeighborhood(option){
+            if(state_polygon){
+                state_polygon.setMap(null);
+            }
+            if(county_polygon){
+                county_polygon.setMap(null);
+            }
+            if(city_polygon){
+                city_polygon.setMap(null);
+            }
+            if(neighborhood_polygon){
+                neighborhood_polygon.setMap(null);
+            }
+            if($(option).val()!=""){
+                var neighborhood = $(option).val();
+                if(neighborhood){
+                    neighborhood = neighborhood + "," + neighborhoods_data_array[neighborhood].city + "," + neighborhoods_data_array[neighborhood].county;
+                    console.log(neighborhood);
+                }
+                var lati, long, coord, final_coord;
+                var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+neighborhood+"&polygon_geojson=1&format=json", function(data) {
+                  if(data.length>0){
+                      var neighborhood_data = data[0];
+                      var paths = [];
+                      var neighborhood_coords = neighborhood_data.geojson.coordinates[0];
+                      var polygon_coords = new Array();
+                      for (var i = 0; i < neighborhood_coords.length; i++) {
+                        coord = neighborhood_coords[i];
+                        lati = parseFloat(coord[1]);
+                        long = parseFloat(coord[0]);
+                        final_coord = {lat: lati,lng: long};
+                        polygon_coords.push({lat:lati,lng:long});
+                      }
+
+                       // Construct the polygon.
+                       neighborhood_polygon = new google.maps.Polygon({
+                          paths: polygon_coords,
+                          strokeColor: '#cdb87d',
+                          strokeOpacity: 0.8,
+                          strokeWeight: 1.5,
+                          fillColor: '#cdb87d',
+                          fillOpacity: 0.3
+                        });
+
+                        neighborhood_polygon.setMap(map);
+
+                        map.fitBounds(neighborhood_polygon.getBounds());
+
+                        var state = neighborhoods_data_array[$(option).val()].state;
+                        var county = neighborhoods_data_array[$(option).val()].county;
+                        var city = neighborhoods_data_array[$(option).val()].city;
+
+                        $('#selectState option[value="'+state+'"]').prop('selected', 'selected');
+                        $('#selectCounty option[value="'+county+'"]').prop('selected', 'selected');
+                        $('#selectCity option[value="'+city+'"]').prop('selected', 'selected');
+
+                  }
+                })
+                  .fail(function() {
+                    console.log( "error" );
+                  });
+             }
+          }
 
           $.fn.dataTable.ext.search.push(
                 function( settings, data, dataIndex ) {
@@ -262,6 +619,14 @@
           );
 
     function initMap(){
+        if (!google.maps.Polygon.prototype.getBounds) {
+            google.maps.Polygon.prototype.getBounds=function(){
+                var bounds = new google.maps.LatLngBounds()
+                this.getPath().forEach(function(element,index){bounds.extend(element)})
+                return bounds
+            }
+
+        }
         var mapProp= {
             center:new google.maps.LatLng(40.444269,-79.953260),
             zoom:5,
@@ -269,23 +634,22 @@
 
         map=new google.maps.Map(document.getElementById("map"),mapProp);
         {% for loc in locations %}
-        var marker = new google.maps.Marker({
-            position: new google.maps.LatLng({{loc.position}}),
-            map: map,
-            title: "{{loc.name}}",
-            id: "{{loc.idLocation}}"
-        });
-        markers_array[marker["id"]]=marker;
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng({{loc.position}}),
+                map: map,
+                title: "{{loc.name}}",
+                id: "{{loc.idLocation}}",
+                mapTypeId: 'terrain'
+            });
+            markers_array[marker["id"]]=marker;
         {% endfor %}
-        console.log(markers_array);
 
     };
 
     function highlightMarkers(markers_ids_array){
         //Remove the markers animation in case a set of them were previously selected
-        console.log(markers_array);
+
         for (var i=0;i<markers_array.length;i++){
-            console.log(markers_array[i]);
             if(markers_array[i]){
                 markers_array[i].setAnimation(null);
             }
@@ -294,13 +658,14 @@
             var index = markers_ids_array[j];
             if (markers_array[index].getAnimation() != google.maps.Animation.BOUNCE) {
                 markers_array[index].setAnimation(google.maps.Animation.BOUNCE);
-            }/*else {
+            }else {
                 markers_array[index].setAnimation(null);
-            }*/
+            }
         }
     }
-</script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPqXhtFS9Fu0-sCptEPyrl7nknrVGQD2g&callback=initMap"></script>
+
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPqXhtFS9Fu0-sCptEPyrl7nknrVGQD2g&callback=initMap"></script>
 </body>
 </html>

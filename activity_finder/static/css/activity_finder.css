@@ -1,13 +1,50 @@
-#map {
-    width: 50%;
-    height: 100%;
-    float: right;
-}
 #acts-table{
-    width: 50%;
+    width: 30%;
     height: 100%;
     float: left;
 }
-#export-table-btn{
-    display:none;
+#header{
+    width:100%;
+    height:8%;
+    background-color: #111150;
+}
+#header-logo{
+    height:100%;
+}
+#filters{
+    padding:10px;
+    font-size: 14px;
+}
+.filter{
+    display:inline-block;
+}
+select{
+    max-width:150px;
+}
+.arrow-icon{
+    width:25px;
+    height:25px;
+}
+#locations-filter{
+    display:inline-block !important;
+}
+.description{
+    display: none;
+}
+tr{
+    cursor:pointer;
+}
+.item{
+    font-family: Palatino, Sans-serif;
+}
+.subtitle{
+    font-weight: bold;
+    color: #111150;
+}
+.title{
+    font-size: 20px;
+    color: #111150;
+}
+.title.active{
+     font-weight: bold;
 }

@@ -35,14 +35,23 @@
      <li>
         <!--{% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}-->
         <!--<a href="" class="btn export-btn btn-lg" id="pdf-btn" onclick="javascript:console.log('{{original}}');">{% trans "Print" %}</a>-->
-         <button class="btn export-btn btn-lg" id="pdf-btn" onclick="javascript:console.log('{{object_id}}');" ><span style="float:right;">PDF</span></button>
-    </li>
+         {% if opts.model_name == "activity" %}
+            <button class="btn export-btn btn-lg" id="pdf-btn" onclick="generateReport();" ><span style="float:right;">PDF</span></button>
+         {% endif %}
+     </li>
     
     {% if has_abolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}
     {% endblock %}
   </ul>
 {% endif %}{% endif %}
 {% endblock %}
+    <script type="text/javascript">
+        function generateReport(){
+            if("{{opts.model_name}}" == "activity"){
+                console.log("test");
+            }
+        }
+    </script>
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
 <div>
 {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
@@ -90,8 +99,3 @@
 </form></div>
 
 {% endblock %}
-<script>
-    function generateReport(){
-        javascript:console.log('{{original}}');
-    }
-</script>
