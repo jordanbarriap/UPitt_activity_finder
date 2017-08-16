@@ -36,18 +36,15 @@
      <li>
         <!--{% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}-->
         <!--<a href="" class="btn export-btn btn-lg" id="pdf-btn" onclick="javascript:console.log('{{original}}');">{% trans "Print" %}</a>-->
-<<<<<<< HEAD
+         <!--{% if opts.model_name == "activity" %}-->
+            <!--<button class="btn export-btn btn-lg" id="pdf-btn" onclick="generateReport();" ><span style="float:right;">PDF</span></button>-->
+         <!--{% endif %}-->
          {% if opts.model_name == "activity" %}
-            <button class="btn export-btn btn-lg" id="pdf-btn" onclick="generateReport();" ><span style="float:right;">PDF</span></button>
-         {% endif %}
-     </li>
-=======
-        {% if opts.model_name == "activity" %}
         <button class="button button1" id="pdf-btn" onclick="generateReport();">PRINT</button>
          <!--<button id="pdf-btn" onclick="generateReport();" style="float:right; width:60px; height:26px; hover:color:red; border: #999999;background-color: #999999;cursor: pointer;text-align: center;border-radius: 15px;color: white;">PRINT</button>-->
         {% endif %}
-    </li>
->>>>>>> origin/master
+     </li>
+
     
     {% if has_abolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}
     {% endblock %}
@@ -565,9 +562,5 @@
 
 </div>
 </form></div>
+{% endblock %}
 
-<<<<<<< HEAD
-{% endblock %}
-=======
-{% endblock %}
->>>>>>> origin/master
