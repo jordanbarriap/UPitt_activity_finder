@@ -54,15 +54,15 @@
             <div class="filter">
                 Sort by:<br>
                 <div class="btn-group" data-toggle="buttons">
-                  <label class="btn btn-secondary active">
-                    <input type="radio" id="sortbystartdate" name="sortbystartdate" checked> Start date
-                  </label>
-                  <label class="btn btn-secondary">
-                    <input type="radio" id="sortbyenddate" name="sortbyenddate"> End date
-                  </label>
-                  <label class="btn btn-secondary">
-                    <input type="radio" id="sortbyname" name="sortbyname"> Name
-                  </label>
+                    <label class="btn btn-secondary active">
+                        <input type="radio" id="sortbyname" name="sortbyname"> Name
+                    </label>
+                    <label class="btn btn-secondary">
+                        <input type="radio" id="sortbystartdate" name="sortbystartdate"> Start date
+                    </label>
+                    <label class="btn btn-secondary">
+                        <input type="radio" id="sortbyenddate" name="sortbyenddate"> End date
+                    </label>
                 </div>
             </div>
 
@@ -79,28 +79,28 @@
             <div id="locations-filter">
                 <div class="filter">
                     State:<br>
-                    <select id="selectState" class="form-control" onchange="searchState(this)">
+                    <select id="selectState" class="form-control" onchange="searchState(this.value)">
                         <option value="">All</option>
                     </select>
                 </div>
                 <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
                 <div class="filter">
                     County:<br>
-                    <select id="selectCounty" class="form-control" onchange="searchCounty(this)">
+                    <select id="selectCounty" class="form-control" onchange="searchCounty(this.value)">
                         <option value="">All</option>
                     </select>
                 </div>
                 <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
                 <div class="filter">
                     City:<br>
-                    <select id="selectCity" class="form-control" onchange="searchCity(this)">
+                    <select id="selectCity" class="form-control" onchange="searchCity(this.value)">
                         <option value="">All</option>
                     </select>
                 </div>
                 <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
                 <div class="filter">
                     Neighborhood:<br>
-                    <select id="selectNeighborhood" class="form-control"  onchange="searchNeighborhood(this)">
+                    <select id="selectNeighborhood" class="form-control"  onchange="searchNeighborhood(this.value)">
                         <option value="">All</option>
                     </select>
                 </div>
@@ -138,6 +138,9 @@
 
                     </td>
                     <td>
+                        {{ act.name }}
+                    </td>
+                    <td>
                         {{ act.start_date }}
                     </td>
                     <td>
@@ -160,9 +163,6 @@
                     </td>
                     <td>
                         {{ act.happening }}
-                    </td>
-                    <td>
-                        {{ act.activitytype }}
                     </td>
                 </tr>
                 {% endfor %}
@@ -205,7 +205,7 @@
                  }
 
                  google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
-                    //this.setZoom(map.getZoom()-1);
+                    this.setZoom(map.getZoom()-1);
                     if (this.getZoom() > 15) {
                         this.setZoom(15);
                     }
@@ -223,9 +223,9 @@
                         "sDom": 'trp',
                         "columns": [
                             { "visible": true, orderable:false},
-                            { "visible": false },
-                            { "visible": false },
-                            { "visible": false },
+                            { "visible": false },//name
+                            { "visible": false, "sType":"date" },//start date
+                            { "visible": false, "sType":"date" },//end date
                             { "visible": false },
                             { "visible": false },
                             { "visible": false },
@@ -256,6 +256,10 @@
                                 $("#selectCity").append('<option value="{{location.city}}">{{location.city}}</option>');
                                 cities_data_array["{{location.city}}"]={county: "{{location.county}}", state: "{{location.state}}"};
 
+                                if(cities_data_array["{{location.city}}"].neighborhoods == undefined){
+                                    cities_data_array["{{location.city}}"].neighborhoods = [];
+                                }
+
                                 if(counties_data_array["{{location.county}}"].cities== undefined){
                                     counties_data_array["{{location.county}}"].cities = ["{{location.city}}"];
                                 }else{
@@ -276,27 +280,55 @@
                             }
                         {% endfor %}
                     {% endfor %}
-                    console.log(states_data_array);
-                    console.log(counties_data_array);
-                    console.log(cities_data_array);
+                    //console.log(states_data_array);
+                    //console.log(counties_data_array);
+                    //console.log(cities_data_array);
+
+                    var nameFlag=false;
+                    var startDateFlag=false;
+                    var endDateFlag=false;
+                    $('.btn').click(function(){
+                        var sortby = $(this).find('input:radio').attr('name');
+                        if(sortby=="sortbyname"){
+                            if(nameFlag)
+                           {
+                                $('#table_id').dataTable().fnSort([[1, 'asc']]);
+                           }
+                           else
+                           {
+                                $('#table_id').dataTable().fnSort([[1, 'des']]);
+                           }
+                           nameFlag=!nameFlag;
+                        }
+                        if(sortby=="sortbystartdate"){
+                            if(startDateFlag)
+                           {
+                                $('#table_id').dataTable().fnSort([[2, 'asc']]);
+                           }
+                           else
+                           {
+                                $('#table_id').dataTable().fnSort([[2, 'des']]);
+                           }
+                           startDateFlag=!startDateFlag;
+                        }
+                        if(sortby=="sortbyenddate"){
+                            if(endDateFlag)
+                           {
+                                $('#table_id').dataTable().fnSort([[3, 'asc']]);
+                           }
+                           else
+                           {
+                                $('#table_id').dataTable().fnSort([[3, 'des']]);
+                           }
+                           endDateFlag=!endDateFlag;
+                        }
+                    });
 
               }
           );
-          var nameFlag=false;
-          $('input:radio[name="sortbyname"]').change(function(){
+          /*var nameFlag=false;
+          $('input:radio[name="sortbyname"]').click(function(){
                if(nameFlag)
-               {
-                    $('#table_id').dataTable().fnSort([[0, 'asc']]);
-               }
-               else
-               {
-                    $('#table_id').dataTable().fnSort([[0, 'des']]);
-               }
-               nameFlag=!nameFlag;
-          });
-          var startDateFlag=false;
-          $('input:radio[name="sortbystartdate"]').change(function(){
-               if(startDateFlag)
                {
                     $('#table_id').dataTable().fnSort([[1, 'asc']]);
                }
@@ -304,20 +336,32 @@
                {
                     $('#table_id').dataTable().fnSort([[1, 'des']]);
                }
-               startDateFlag=!startDateFlag;
+               nameFlag=!nameFlag;
           });
-          var endDateFlag=false;
-          $('input:radio[name="sortbyenddate"]').change(function(){
-               if(endDateFlag)
+          var startDateFlag=false;
+          $('input:radio[name="sortbystartdate"]').click(function(){
+               if(startDateFlag)
                {
-                    $('#table_id').dataTable().fnSort([[2, 'asc']]);
+                    $('#table_id').dataTable().fnSort([[0, 'asc']]);
                }
                else
                {
-                    $('#table_id').dataTable().fnSort([[2, 'des']]);
+                    $('#table_id').dataTable().fnSort([[0, 'des']]);
+               }
+               startDateFlag=!startDateFlag;
+          });
+          var endDateFlag=false;
+          $('input:radio[name="sortbyenddate"]').click(function(){
+               if(endDateFlag)
+               {
+                    $('#table_id').dataTable().fnSort([[3, 'asc']]);
+               }
+               else
+               {
+                    $('#table_id').dataTable().fnSort([[3, 'des']]);
                }
                endDateFlag=!endDateFlag;
-          });
+          });*/
           function searchLocation()
           {
                 var obj=document.getElementById("selectLocation");
@@ -357,8 +401,8 @@
             if(neighborhood_polygon){
                 neighborhood_polygon.setMap(null);
             }
-            if($(option).val()!=""){
-                var state = $(option).val();
+            if(option!=""){//$(option).val()!=""){
+                var state = option;//$(option).val();
                 var lati, long, coord, final_coord;
                 var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+state+"&polygon_geojson=1&format=json", function(data) {
                   if(data.length>0){
@@ -387,6 +431,61 @@
                         state_polygon.setMap(map);
 
                         map.fitBounds(state_polygon.getBounds());
+                        //Filter counties, cities and neighborhoods according the state that was selected by the user
+                        var cities = [];
+                        var neighborhoods = [];
+                        $('#selectCounty option').each(function(index,value){
+                            var county = $(value).val().toString();
+                            if(county!="" && states_data_array[state].counties.indexOf(county)==-1){
+                                $(value).hide();
+                            }else{
+                                $(value).show();
+                                console.log(county);
+                                if (county!=""){
+                                    var county_cities = $('#selectCity option');
+                                    for (var i=0;i<county_cities.length;i++){
+                                        var city = $(county_cities[i]).val().toString();
+                                        if (city=="" || counties_data_array[county].cities.indexOf(city)!=-1){
+                                            cities.push(city);
+                                            var city_neighborhoods = $('#selectNeighborhood option');
+                                            console.log(city_neighborhoods);
+                                            if(city!=""){
+                                                for (var j=0;j<city_neighborhoods.length;j++){
+                                                    var neighborhood = $(city_neighborhoods[j]).val().toString();
+                                                    console.log(cities_data_array[city]);
+                                                    if (neighborhood=="" || cities_data_array[city].neighborhoods.indexOf(neighborhood)!=-1){
+                                                        neighborhoods.push(neighborhood);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        });
+
+                        //Show the cities that belong to the state selected
+                        $('#selectCity option').each(function(){
+                            var city = $(this).val().toString();
+                            if(city!="" && cities.indexOf(city)==-1){
+                                $(this).hide();
+                            }else{
+                                $(this).show();
+                            }
+                        });
+
+                        //Show the neighborhoods that belong to the state selected
+                        $('#selectNeighborhood option').each(function(){
+                            var neighborhood = $(this).val().toString();
+                            console.log(neighborhood);
+                            if(neighborhood!="" && neighborhoods.indexOf(neighborhood)==-1){
+                                $(this).hide();
+                            }else{
+                                $(this).show();
+                            }
+                        });
+
 
                         $('#selectCounty option[value=""]').prop('selected', 'selected');
                         $('#selectCity option[value=""]').prop('selected', 'selected');
@@ -397,14 +496,39 @@
                   .fail(function() {
                     console.log( "error" );
                   });
+             }else{
+                $("#selectCounty option").show();
+                $("#selectCity option").show();
+                $("#selectNeighborhood option").show();
+
+                $('#selectCounty option[value=""]').prop('selected', 'selected');
+                $('#selectCity option[value=""]').prop('selected', 'selected');
+                $('#selectNeighborhood option[value=""]').prop('selected', 'selected');
+
+                var bounds = new google.maps.LatLngBounds();
+                 for (var i = 0; i < markers_array.length; i++) {
+                    if(markers_array[i]){
+                        bounds.extend(markers_array[i].getPosition());
+                    }
+                 }
+
+                 google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
+                    this.setZoom(map.getZoom()-1);
+                    if (this.getZoom() > 15) {
+                        this.setZoom(15);
+                    }
+                 });
+
+                 map.fitBounds(bounds);
              }
+
           }
           function searchCounty(option){
             if(state_polygon){
                 state_polygon.setMap(null);
             }
             if(county_polygon){
-                county_polygon.setMap(null)
+                county_polygon.setMap(null);
             }
             if(city_polygon){
                 city_polygon.setMap(null);
@@ -412,8 +536,8 @@
             if(neighborhood_polygon){
                 neighborhood_polygon.setMap(null);
             }
-            if($(option).val()!=""){
-                var county = $(option).val();
+            if(option!=""){//$(option).val()!=""){
+                var county =option;//$(option).val();
                 var lati, long, coord, final_coord;
                 var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+county+" County&polygon_geojson=1&format=json", function(data) {
                   if(data.length>0){
@@ -443,15 +567,27 @@
 
                         map.fitBounds(county_polygon.getBounds());
 
-                        var state = counties_data_array[$(option).val()].state;
+                        var state = counties_data_array[option].state;//$(option).val()].state;
                         $('#selectState option[value="'+state+'"]').prop('selected', 'selected');
                         //Populates the list of cities according to the county that was selected by the user
-                        $('#selectCity option').each(function(){
-                            var city = $(this).val().toString();
+                        $('#selectCity option').each(function(index,value){
+                            var city = $(value).val().toString();
                             if (city!="" && counties_data_array[county].cities.indexOf(city)==-1){
-                                $(this).hide();
+                                $(value).hide();
                             }else{
-                                $(this).show();
+                                $(value).show();
+                                if(city!=""){
+                                    console.log(city);
+                                    var city_neighborhoods = $('#selectNeighborhood option');
+                                    for (var i=0;i<city_neighborhoods.length;i++){
+                                        var neighborhood = $(city_neighborhoods[i]).val().toString();
+                                        if (neighborhood!="" && cities_data_array[city].neighborhoods.indexOf(neighborhood)==-1){
+                                            $(city_neighborhoods[i]).hide();
+                                        }else{
+                                            $(city_neighborhoods[i]).show();
+                                        }
+                                    }
+                                }
                             }
                         });
                         $('#selectCity option[value=""]').prop('selected', 'selected');
@@ -462,6 +598,11 @@
                   .fail(function() {
                     console.log( "error" );
                   });
+             }else{
+                var selected_state = $('#selectState').find(":selected").val();
+                if(selected_state!=""){
+                    searchState(selected_state);
+                }
              }
           }
           function searchCity(option){
@@ -477,8 +618,8 @@
             if(neighborhood_polygon){
                 neighborhood_polygon.setMap(null);
             }
-            if($(option).val()!=""){
-                var city = $(option).val();
+            if(option!=""){//(option).val()!=""){
+                var city = option;//$(option).val();
                 var lati, long, coord, final_coord;
                 var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+city+","+cities_data_array[city].county+","+cities_data_array[city].state+"&polygon_geojson=1&format=json", function(data) {
                   if(data.length>0){
@@ -508,8 +649,18 @@
 
                         map.fitBounds(city_polygon.getBounds());
 
-                        var state = cities_data_array[$(option).val()].state;
-                        var county = cities_data_array[$(option).val()].county;
+                        var state = cities_data_array[option].state;//$(option).val()].state;
+                        $("#selectCounty option").each(function(){
+                            var county = $(this).val().toString();
+                            console.log(county);
+                            if(county!="" && states_data_array[state].counties.indexOf(county)==-1){
+                                $(this).hide();
+                            }else{
+                                $(this).show();
+                            }
+                        });
+
+                        var county = cities_data_array[option].county;//$(option).val()].county;
 
                         $('#selectState option[value="'+state+'"]').prop('selected', 'selected');
                         $('#selectCounty option[value="'+county+'"]').prop('selected', 'selected');
@@ -528,6 +679,11 @@
                   .fail(function() {
                     console.log( "error" );
                   });
+             }else{
+                var selected_county = $('#selectCounty').find(":selected").val();
+                if(selected_county!=""){
+                    searchCounty(selected_county);
+                }
              }
           }
 
@@ -544,8 +700,8 @@
             if(neighborhood_polygon){
                 neighborhood_polygon.setMap(null);
             }
-            if($(option).val()!=""){
-                var neighborhood = $(option).val();
+            if(option!=""){//$(option).val()!=""){
+                var neighborhood = option;//$(option).val();
                 if(neighborhood){
                     neighborhood = neighborhood + "," + neighborhoods_data_array[neighborhood].city + "," + neighborhoods_data_array[neighborhood].county;
                     console.log(neighborhood);
@@ -579,9 +735,29 @@
 
                         map.fitBounds(neighborhood_polygon.getBounds());
 
-                        var state = neighborhoods_data_array[$(option).val()].state;
-                        var county = neighborhoods_data_array[$(option).val()].county;
-                        var city = neighborhoods_data_array[$(option).val()].city;
+                        //Filter the counties according to the ones that belong to the respective state
+                        var state = neighborhoods_data_array[option].state;//$(option).val()].state;
+                        $("#selectCounty option").each(function(){
+                            var county = $(this).val().toString();
+                            if(county!="" && states_data_array[state].counties.indexOf(county)==-1){
+                                $(this).hide();
+                            }else{
+                                $(this).show();
+                            }
+                        });
+
+                        //Filter the cities according to the ones that belong to the respective county
+                        var county = neighborhoods_data_array[option].county;//$(option).val()].county;
+                        $("#selectCity option").each(function(){
+                            var city = $(this).val().toString();
+                            if(city!="" && counties_data_array[county].cities.indexOf(city)==-1){
+                                $(this).hide();
+                            }else{
+                                $(this).show();
+                            }
+                        });
+
+                        var city = neighborhoods_data_array[option].city;//$(option).val()].city;
 
                         $('#selectState option[value="'+state+'"]').prop('selected', 'selected');
                         $('#selectCounty option[value="'+county+'"]').prop('selected', 'selected');
@@ -592,6 +768,11 @@
                   .fail(function() {
                     console.log( "error" );
                   });
+             }else{
+                var selected_city = $('#selectCity').find(":selected").val();
+                if(selected_city!=""){
+                    searchCity(selected_city);
+                }
              }
           }
 
