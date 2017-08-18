@@ -11,7 +11,7 @@ from activity_finder.models import Activity
 from django.apps import apps
 
 from django.contrib.auth.decorators import login_required
-
+from django import db
 from django.db.models import Value
 from django.db.models.functions import Concat
 
@@ -22,6 +22,7 @@ def reports(request):
     entities_list = []
     for entity in entities:
         entities_list.append(entity.__name__)
+    db.connections.close_all()
     return render(request, 'reports2.html', {'entities':entities_list})
 
 @login_required
@@ -43,6 +44,7 @@ def get_filters(request):
     data = {
         'filters': entities_list
     }
+    db.connections.close_all()
     return JsonResponse(data)
 
 @login_required
@@ -186,6 +188,7 @@ def get_table1(request):
     }
     # print("#CHECKING DATA")
     # print(data)
+    db.connections.close_all()
     return JsonResponse(data)
 
 @login_required
@@ -359,6 +362,7 @@ def get_table(request):
         'filters':list(data_filters),
         'data':{'rows': json_data_no_repeated}
     }
+    db.connections.close_all()
     return JsonResponse(data)
 
 def AggregateFocusArea(data, idx):
@@ -390,7 +394,8 @@ def AggregateFocusArea(data, idx):
                 # flag = False
     t = t + (focusArea,) + data[len(data)-1][idx + 2:]
     results.append(t)
-    print(results)
+    # print(results)
+    db.connections.close_all()
     return results
 
 def AggregateFocusArea_old(data):
@@ -777,6 +782,7 @@ def get_subtable(request):
         'filters':list(data_filters),
         'data':{'rows': json_data_no_repeated}
     }
+    db.connections.close_all()
     return JsonResponse(data)
 
 
