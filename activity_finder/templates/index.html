@@ -218,28 +218,34 @@
 
           $('.item').on("click", function () {
                  var description = $(this).find(".description");
-                 description.slideDown(100);
-                 $(this).attr("class","item active");
-                 $('.description').not(description).slideUp(100);
+                 if(!$(this).hasClass("active")){
+                     description.slideDown(100);
+                     $(this).attr("class","item active");
+                     $('.description').not(description).slideUp(100);
 
-                 var markers_ids_str = $(this).find("input[name='locations']").val();
-                 markers_ids_str = markers_ids_str.substring(0,markers_ids_str.length-1);
-                 var markers_ids = markers_ids_str.split(";");
+                     var markers_ids_str = $(this).find("input[name='locations']").val();
+                     markers_ids_str = markers_ids_str.substring(0,markers_ids_str.length-1);
+                     var markers_ids = markers_ids_str.split(";");
 
-                 var bounds = new google.maps.LatLngBounds();
-                 for (var i = 0; i < markers_ids.length; i++) {
-                    bounds.extend(markers_array[markers_ids[i]].getPosition());
+                     var bounds = new google.maps.LatLngBounds();
+                     for (var i = 0; i < markers_ids.length; i++) {
+                        bounds.extend(markers_array[markers_ids[i]].getPosition());
+                     }
+
+                     google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
+                        this.setZoom(map.getZoom()-1);
+                        if (this.getZoom() > 15) {
+                            this.setZoom(15);
+                        }
+                     });
+
+                     map.fitBounds(bounds);
+                     highlightMarkers(markers_ids);
+                 }else{
+                    description.slideUp(100);
+                    $(this).attr("class","item");
+                    notHighlightMarkers();
                  }
-
-                 google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
-                    this.setZoom(map.getZoom()-1);
-                    if (this.getZoom() > 15) {
-                        this.setZoom(15);
-                    }
-                 });
-
-                 map.fitBounds(bounds);
-                 highlightMarkers(markers_ids);
 
           });
           <!--manipulate the datatable-->
@@ -526,6 +532,13 @@
                         $('#selectCity option[value=""]').prop('selected', 'selected');
                         $('#selectNeighborhood option[value=""]').prop('selected', 'selected');
 
+                        //Filter list of activities according to the state they are present
+                        //Clear others filters in case they were applied before
+                        $('#table_id').DataTable().column(10).search("").draw();
+                        $('#table_id').DataTable().column(9).search("").draw();
+                        $('#table_id').DataTable().column(8).search("").draw();
+                        $('#table_id').DataTable().column(7).search(state).draw();
+
                   }
                 })
                   .fail(function() {
@@ -555,10 +568,21 @@
                  });
 
                  map.fitBounds(bounds);
+
+
+                //Clear others filters in case they were applied before
+                $('#table_id').DataTable().column(10).search("").draw();
+                $('#table_id').DataTable().column(9).search("").draw();
+                $('#table_id').DataTable().column(8).search("").draw();
+                //Show all list of activities
+                $('#table_id').DataTable().column(7).search("").draw();
              }
+
+
 
           }
           function searchCounty(option){
+
             if(state_polygon){
                 state_polygon.setMap(null);
             }
@@ -572,6 +596,7 @@
                 neighborhood_polygon.setMap(null);
             }
             if(option!=""){//$(option).val()!=""){
+
                 var county =option;//$(option).val();
                 var lati, long, coord, final_coord;
                 var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+county+" County&polygon_geojson=1&format=json", function(data) {
@@ -628,6 +653,12 @@
                         $('#selectCity option[value=""]').prop('selected', 'selected');
                         $('#selectNeighborhood option[value=""]').prop('selected', 'selected');
 
+                        //Filter list of activities according to the county they are present
+                        //Clear others filters in case they were applied before
+                        $('#table_id').DataTable().column(10).search("").draw();
+                        $('#table_id').DataTable().column(9).search("").draw();
+                        $('#table_id').DataTable().column(8).search(county).draw();
+
                   }
                 })
                   .fail(function() {
@@ -639,6 +670,8 @@
                     searchState(selected_state);
                 }
              }
+
+
           }
           function searchCity(option){
             if(state_polygon){
@@ -709,6 +742,12 @@
                         });
                         $('#selectNeighborhood option[value=""]').prop('selected', 'selected');
 
+
+                        //Clear others filters in case they were applied before
+                        $('#table_id').DataTable().column(10).search("").draw();
+                        //Filter list of activities according to the city they are present
+                        $('#table_id').DataTable().column(9).search(city).draw();
+
                   }
                 })
                   .fail(function() {
@@ -739,7 +778,6 @@
                 var neighborhood = option;//$(option).val();
                 if(neighborhood){
                     neighborhood = neighborhood + "," + neighborhoods_data_array[neighborhood].city + "," + neighborhoods_data_array[neighborhood].county;
-                    console.log(neighborhood);
                 }
                 var lati, long, coord, final_coord;
                 var jqxhr = $.getJSON( "https://nominatim.openstreetmap.org/search.php?q="+neighborhood+"&polygon_geojson=1&format=json", function(data) {
@@ -797,6 +835,9 @@
                         $('#selectState option[value="'+state+'"]').prop('selected', 'selected');
                         $('#selectCounty option[value="'+county+'"]').prop('selected', 'selected');
                         $('#selectCity option[value="'+city+'"]').prop('selected', 'selected');
+
+                        //Filter list of activities according to the neighborhood they are present
+                        $('#table_id').DataTable().column(10).search(option).draw();
 
                   }
                 })
@@ -870,20 +911,33 @@
 
     };
 
-    function highlightMarkers(markers_ids_array){
-        //Remove the markers animation in case a set of them were previously selected
-
+    function notHighlightMarkers(){
         for (var i=0;i<markers_array.length;i++){
             if(markers_array[i]){
                 markers_array[i].setAnimation(null);
+                markers_array[i].setOpacity(1.0);
             }
         }
+    }
+
+    function highlightMarkers(markers_ids_array){
+        //Remove the markers animation in case a set of them were previously selected
+         /*for (var i=0;i<markers_array.length;i++){
+            if(markers_array[i]){
+                markers_array[i].setAnimation(null);
+                markers_array[i].setOpacity(1.0);
+            }
+        }*/
         for (var j=0;j<markers_ids_array.length;j++){
             var index = markers_ids_array[j];
-            if (markers_array[index].getAnimation() != google.maps.Animation.BOUNCE) {
-                markers_array[index].setAnimation(google.maps.Animation.BOUNCE);
-            }else {
-                markers_array[index].setAnimation(null);
+            if(markers_array[index]){
+                if (markers_array[index].getAnimation() != google.maps.Animation.BOUNCE) {
+                    markers_array[index].setAnimation(google.maps.Animation.BOUNCE);
+                    markers_array[index].setOpacity(1.0);
+                }else {
+                    markers_array[index].setAnimation(null);
+                    markers_array[index].setOpacity(0.3);
+                }
             }
         }
     }
