@@ -60,7 +60,7 @@
                     <option value="">All</option>
                     {% for act in activitytypes %}
                     <!--<div class="item">-->
-                        <option class="item" value={{ act.name }}>{{ act.name }}</option>
+                        <option value={{ act.name }}>{{ act.name }}</option>
                     <!--</div>-->
                     {% endfor %}
                 </select>
@@ -133,8 +133,8 @@
                 <tbody>
                 {% for act in activities %}
                 <tr>
-                    <td>
-                        <div class="item">
+                    <td class="item">
+                        <div><!-- class="item">-->
                             <span class="title">{{ act.name }}</span>
                             <p class="description">
                                 <br>
@@ -220,8 +220,11 @@
                  var description = $(this).find(".description");
                  if(!$(this).hasClass("active")){
                      description.slideDown(100);
-                     $(this).attr("class","item active");
+                     $(this).addClass("active");
                      $('.description').not(description).slideUp(100);
+
+                     //Remove active from other (potential) open activity
+                     $('.item').not($(this)).removeClass("active");
 
                      var markers_ids_str = $(this).find("input[name='locations']").val();
                      markers_ids_str = markers_ids_str.substring(0,markers_ids_str.length-1);
@@ -243,7 +246,7 @@
                      highlightMarkers(markers_ids);
                  }else{
                     description.slideUp(100);
-                    $(this).attr("class","item");
+                    $(this).removeClass("active");
                     notHighlightMarkers();
                  }
 
@@ -264,12 +267,12 @@
                             { "visible": false, "sType":"date" },//start date
                             { "visible": false, "sType":"date" },//end date
                             { "visible": false },//activity type
-                            { "visible": false },//happening?
-                            { "visible": false },
-                            { "visible": false },
-                            { "visible": false },
-                            { "visible": false },
-                            { "visible": false }
+                            { "visible": false },//happening
+                            { "visible": false },//location names
+                            { "visible": false },//states
+                            { "visible": false },//counties
+                            { "visible": false },//cities
+                            { "visible": false }//neighborhoods
                          ],
                     });
                     {% for act in activities %}
@@ -928,18 +931,32 @@
                 markers_array[i].setOpacity(1.0);
             }
         }*/
-        for (var j=0;j<markers_ids_array.length;j++){
-            var index = markers_ids_array[j];
-            if(markers_array[index]){
-                if (markers_array[index].getAnimation() != google.maps.Animation.BOUNCE) {
-                    markers_array[index].setAnimation(google.maps.Animation.BOUNCE);
-                    markers_array[index].setOpacity(1.0);
-                }else {
-                    markers_array[index].setAnimation(null);
-                    markers_array[index].setOpacity(0.3);
+        console.log(markers_ids_array);
+        for (var i=0;i<markers_array.length;i++){
+            if(markers_array[i]){
+                if(markers_ids_array.indexOf(String(i))!=-1){
+                    markers_array[i].setOpacity(1.0);
+                    markers_array[i].setAnimation(google.maps.Animation.BOUNCE);
+                }else{
+                    markers_array[i].setAnimation(null);
+                    markers_array[i].setOpacity(0.3);
                 }
             }
         }
+        /*for (var j=0;j<markers_ids_array.length;j++){
+            var index = markers_ids_array[j];
+            if(markers_array[index]){
+                if (markers_array[index].getAnimation() != google.maps.Animation.BOUNCE) {
+                    markers_array[index].setOpacity(1.0);
+                    markers_array[index].setAnimation(google.maps.Animation.BOUNCE);
+
+                }else {
+                    markers_array[index].setOpacity(0.3);
+                    markers_array[index].setAnimation(null);
+
+                }
+            }
+        }*/
     }
 
     function makeInfoWindowEvent(map, info_window, content_string, marker) {
