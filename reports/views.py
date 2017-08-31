@@ -23,7 +23,7 @@ def reports(request):
     for entity in entities:
         entities_list.append(entity.__name__)
     db.connections.close_all()
-    return render(request, 'reports2.html', {'entities':entities_list})
+    return render(request, 'reports1.html', {'entities':entities_list})
 
 @login_required
 def get_filters(request):

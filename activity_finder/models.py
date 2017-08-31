@@ -13,16 +13,33 @@ class ActivityType(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "Activity Types"
+
+class PeopleType(models.Model):
+    idPeopleType = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "People Types"
 
 class People(models.Model):
     idPeople = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=45)
     last_name = models.CharField(max_length=45)
     email = models.CharField(max_length=45)
-    type = models.CharField(max_length=45)
+    phone_number = models.CharField(max_length=20,blank=True, null=True)
+    type = models.ForeignKey(PeopleType, on_delete=models.CASCADE)
+    # type = models.CharField(max_length=45)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.last_name +", "+self.first_name
+
+    class Meta:
+        verbose_name_plural = "People"
 
 class FocusArea(models.Model):
     idFocusArea = models.AutoField(primary_key=True)
@@ -31,6 +48,9 @@ class FocusArea(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Focus Areas"
 
 
 class Location(models.Model):
@@ -49,6 +69,9 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Locations"
 
     def save(self, *args, **kwargs):
         REGIONS = {'Southwest PA': ['Lawrence', 'Butler', 'Armstrong', 'Indiana', 'Beaver', 'Allegheny', 'Washington',
@@ -125,18 +148,11 @@ class School(models.Model):
     def __str__(self):
         return self.name
 
-
-class Unit(models.Model):
-    idUnit = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
-    #activities = models.ManyToManyField(Activity)
-
-    def __str__(self):
-        return self.name
+    class Meta:
+        verbose_name_plural = "Schools"
 
 
-class Population(models.Model):
+class PopulationServed(models.Model):
     idPopulation= models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     #activities = models.ManyToManyField(Activity)
@@ -144,24 +160,24 @@ class Population(models.Model):
     def __str__(self):
         return self.name
 
-
-
-class ServedNeighbourhood(models.Model):
-    idServedNeighbourhood = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    #activities = models.ManyToManyField(Activity)
-
-    def __str__(self):
-        return self.name
+    class Meta:
+        verbose_name_plural = "Populations"
 
 
 class Course(models.Model):
     idCourse = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
+    term = models.CharField(max_length=100, blank=True, null=True)
+    department = models.CharField(max_length=100, blank=True, null=True)
+    course_id = models.CharField(max_length=100, blank=True, null=True)
+    section = models.CharField(max_length=100, blank=True, null=True)
     #activities = models.ManyToManyField(Activity)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Courses"
 
 
 class CommunityPartner(models.Model):
@@ -169,9 +185,13 @@ class CommunityPartner(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     #activities = models.ManyToManyField(Activity)
-
+    website_address = models.CharField(max_length=500, blank=True, null=True)
+    phone_number = models.CharField(max_length=20)
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Community Partners"
 
 
 
@@ -180,35 +200,35 @@ class Activity(models.Model):
     name = models.CharField(max_length=300)
     activitytype = models.ForeignKey(ActivityType, blank=True, null=True, on_delete=models.CASCADE)
     description = models.TextField(max_length=2000)
-    happening = models.BooleanField()
-    start_date = models.DateField(default=date.today)
-    end_date = models.DateField(blank=True, null=True)
-    outcomes = models.TextField(max_length=2000, blank=True, null=True)
-    funding = models.CharField(max_length=500, blank=True, null=True)
+    estimated_start_date = models.DateField(default=date.today, help_text='(yyyy-mm-dd)')
+    estimated_end_date = models.DateField(blank=True, null=True, help_text='(yyyy-mm-dd). Leave blank if currently ongoing.')
+    webpage_associated_with_activity = models.CharField(max_length=500, blank=True, null=True)
+    outcomes = models.TextField(max_length=2000, blank=True, null=True, help_text='Please include a description of any products, programs, or outputs this activity has generated.')
+    funding = models.CharField(max_length=500, blank=True, null=True, help_text='Please include the internal (Pitt) and external sources of funding that support this activity.')
     unitNotes = models.CharField(max_length=500, blank=True, null=True)
     people = models.ForeignKey(People, on_delete=models.CASCADE, related_name="people_in_charge", null = True)
-    contactInformation= models.BooleanField()
+    contactInformation= models.BooleanField(help_text='Please check it if you want the contact information to be visible in public.')
     universityleaders = models.ManyToManyField(People)#,related_name="associated_university_leader")
     #idFocusArea = models.ForeignKey(FocusArea, on_delete=models.CASCADE, null = True)
     focusareas = models.ManyToManyField(FocusArea)#, related_name="associated_focus_area")
     #idLocation = models.ForeignKey(Location, on_delete=models.CASCADE, null = True)
     locations = models.ManyToManyField(Location)#, related_name="associated_location")
     #idUnit = models.ForeignKey(Unit, on_delete=models.CASCADE, null = True)
-    schools = models.ManyToManyField(School)
-    units = models.ManyToManyField(Unit)#,related_name="associated_unit")
+    schools = models.ManyToManyField(School, blank=True, null=True)
     #idPopulation = models.ForeignKey(Population, on_delete=models.CASCADE, null = True)
-    populations = models.ManyToManyField(Population)#, related_name="associated_population")
+    populations_served = models.ManyToManyField(PopulationServed)#, related_name="associated_population")
     #idServedNeighbourhood = models.ForeignKey(ServedNeighbourhood, on_delete=models.CASCADE, null = True)
-    servedneighbourhoods = models.ManyToManyField(ServedNeighbourhood)#, related_name="associated_served_neighbourhoods")
     #idCourse = models.ForeignKey(Course, on_delete=models.CASCADE, null = True)
-    courses = models.ManyToManyField(Course)#, related_name="associated_course")
+    courses = models.ManyToManyField(Course, blank=True, null=True)#, related_name="associated_course")
     #idCommunityPartner = models.ForeignKey(CommunityPartner, on_delete=models.CASCADE, null = True)
     communitypartners = models.ManyToManyField(CommunityPartner)#, related_name="associated_community_partner")
-    reviewed = models.CharField(max_length=100,blank=True, null=True)
+    reviewed = models.BooleanField()
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "Activities"
 
 
 
