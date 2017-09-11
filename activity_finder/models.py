@@ -56,7 +56,7 @@ class FocusArea(models.Model):
 class Location(models.Model):
 
     idLocation = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
+    #name = models.CharField(max_length=100)
     position = GeopositionField()
     address = models.CharField(max_length=200, blank=True, null=True, editable=False)
     neighborhood = models.CharField(max_length=100, blank=True, null=True, editable=False)
@@ -68,7 +68,7 @@ class Location(models.Model):
     #activities = models.ManyToManyField(Activity)
 
     def __str__(self):
-        return self.name
+        return str(self.address)
 
     class Meta:
         verbose_name_plural = "Locations"
@@ -183,8 +183,9 @@ class Course(models.Model):
 class CommunityPartner(models.Model):
     idCommunityPartner = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
+    #address = models.CharField(max_length=200)
     #activities = models.ManyToManyField(Activity)
+    location = GeopositionField()
     website_address = models.CharField(max_length=500, blank=True, null=True)
     phone_number = models.CharField(max_length=20)
     def __str__(self):
