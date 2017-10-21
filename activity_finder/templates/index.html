@@ -41,19 +41,20 @@
 <body>
 <div>
     <div>
-        <div id="header">
-            <img id="header-logo" src="{% static "/image/pitt-logo-bluebkg.gif" %}" alt="University of Pittsburgh" />
+        <div id="header" vertical-align="center">
+            <img id="header-logo" src="{% static "/image/upitt-logo.png" %}" alt="University of Pittsburgh" />
+            University of Pittsburgh Community Engagement Inventory
             <!--<h1 class="title-words" color="#E7EA9A">University of Pittsburgh</h1>-->
         </div>
     </div>
-    <div>
+    <div style="margin-bottom: 8px;">
         <div id="filters">
             <div class="filter">
-                Search:<br><input type="text" class="search form-control form-control-sm" id="searchkeywords" onkeyup="searchKeywords()">
+                Search:<br><input type="text" width="400" class="search form-control form-control-sm" id="searchkeywords" onkeyup="searchKeywords()">
             </div>
-            <div class="filter" id="past-activities">
-                Hide past activities?<br><input type="checkbox" id="happen_filter" style="display:none;" data-group-cls="btn-group-sm" data-reverse>
-            </div>
+            <!--<div class="filter" id="past-activities">-->
+                <!--Hide past activities?<br><input type="checkbox" id="happen_filter" style="display:none;" data-group-cls="btn-group-sm" data-reverse>-->
+            <!--</div>-->
             <div class="filter">
                 Activity Type:<br>
                 <select id="selectActivity" class="form-control form-control-sm" onchange="searchActivityType()">
@@ -65,52 +66,52 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="filter">
-                Sort by:<br>
-                <div class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-secondary btn-sm active">
-                        <input type="radio" id="sortbyname" name="sortbyname"> Name
-                    </label>
-                    <label class="btn btn-secondary btn-sm">
-                        <input type="radio" id="sortbystartdate" name="sortbystartdate"> Start date
-                    </label>
-                    <label class="btn btn-secondary btn-sm">
-                        <input type="radio" id="sortbyenddate" name="sortbyenddate"> End date
-                    </label>
-                </div>
-            </div>
+            <!--<div class="filter">-->
+                <!--Sort by:<br>-->
+                <!--<div class="btn-group" data-toggle="buttons">-->
+                    <!--<label class="btn btn-secondary btn-sm active">-->
+                        <!--<input type="radio" id="sortbyname" name="sortbyname"> Name-->
+                    <!--</label>-->
+                    <!--<label class="btn btn-secondary btn-sm">-->
+                        <!--<input type="radio" id="sortbystartdate" name="sortbystartdate"> Start date-->
+                    <!--</label>-->
+                    <!--<label class="btn btn-secondary btn-sm">-->
+                        <!--<input type="radio" id="sortbyenddate" name="sortbyenddate"> End date-->
+                    <!--</label>-->
+                <!--</div>-->
+            <!--</div>-->
 
-            <!--Location:
-            <select id="selectLocation" onchange="searchLocation()">
-                <option value="">ALL</option>
-                {% for act in locations %}
-                <div class="item">
-                    <option value={{ act.name }}>{{ act.name }}</option>
-                </div>
-                {% endfor %}
-            </select>-->
+            <!--Location:-->
+            <!--<select id="selectLocation" onchange="searchLocation()">-->
+                <!--<option value="">ALL</option>-->
+                <!--{% for act in locations %}-->
+                <!--<div class="item">-->
+                    <!--<option value={{ act.name }}>{{ act.name }}</option>-->
+                <!--</div>-->
+                <!--{% endfor %}-->
+            <!--</select>-->
 
             <div id="locations-filter">
-                <div class="location-filter">
-                    State:<br>
-                    <select id="selectState" class="form-control form-control-sm" onchange="searchState(this.value)">
-                        <option value="">All</option>
-                    </select>
-                </div>
-                <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
-                <div class="location-filter">
-                    County:<br>
-                    <select id="selectCounty" class="form-control form-control-sm" onchange="searchCounty(this.value)">
-                        <option value="">All</option>
-                    </select>
-                </div>
-                <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
-                <div class="location-filter">
-                    City:<br>
-                    <select id="selectCity" class="form-control form-control-sm" onchange="searchCity(this.value)">
-                        <option value="">All</option>
-                    </select>
-                </div>
+                <!--<div class="location-filter">-->
+                    <!--State:<br>-->
+                    <!--<select id="selectState" class="form-control form-control-sm" onchange="searchState(this.value)">-->
+                        <!--<option value="">All</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <!--<img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />-->
+                <!--<div class="location-filter">-->
+                    <!--County:<br>-->
+                    <!--<select id="selectCounty" class="form-control form-control-sm" onchange="searchCounty(this.value)">-->
+                        <!--<option value="">All</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <!--<img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />-->
+                <!--<div class="location-filter">-->
+                    <!--City:<br>-->
+                    <!--<select id="selectCity" class="form-control form-control-sm" onchange="searchCity(this.value)">-->
+                        <!--<option value="">All</option>-->
+                    <!--</select>-->
+                <!--</div>-->
                 <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
                 <div class="location-filter">
                     Neighborhood:<br>
@@ -123,78 +124,85 @@
         </div>
     </div>
     <div id="content-div">
-        <div id="acts-table"> <!-- class="col-md-3">-->
-            <table id="table_id" class="display">
-                <thead>
-                <tr>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for act in activities %}
-                <tr>
-                    <td class="item">
-                        <div><!-- class="item">-->
-                            <span class="title">{{ act.name }}</span>
-                            <p class="description">
-                                <br>
-                                <i>{{ act.description }}</i><br><br>
-                                <span class="subtitle">Location(s):</span>  {% for location in act.locations.all %}
-                                            {{ location.name }} {% if not forloop.last %},{% endif %}
-                                         {% endfor %}<br>
-                                <span class="subtitle">Category:</span>  {{ act.activitytype }}<br>
-                                <span class="subtitle">Start date:</span>  {{ act.start_date }}<br>
-                                <span class="subtitle">End date:</span>  {{ act.end_date }}<br>
-                            </p>
-                            <input type="hidden" name="locations" value="{% for location in act.locations.all %}{{ location.idLocation}};{% endfor %}">
+        <div id="acts-table">
+            <div class="instruction">To learn more about each of the activities below, click on the name of the activity</div>
+            <div id="acts-table-1"> <!-- class="col-md-3">-->
+                <table id="table_id" class="display">
+                    <thead>
+                    <tr>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for act in activities %}
+                    <tr>
+                        <td class="item">
+                            <div><!-- class="item">-->
+                                <span class="title">{{ act.name }}</span>
+                                <p class="description">
+                                    <br>
+                                    <i>{{ act.description }}</i><br><br>
+                                    <span class="subtitle">Location(s):</span>  {% for location in act.locations.all %}
+                                                {{ location.name }} {% if not forloop.last %},{% endif %}
+                                             {% endfor %}<br>
+                                    <span class="subtitle">Contact Name:</span>  {{ act.contactInformation }}<br>
+                                    <span class="subtitle">Contact Email:</span>  {{ act.communitypartner }}<br>
+                                    <span class="subtitle">Community Partners:</span>  {{ act.activitytype }}<br>
+                                    <span class="subtitle">Webpage:</span>  {{ act.activitytype }}<br>
+                                    <span class="subtitle">Category:</span>  {{ act.activitytype }}<br>
+                                    <!--<span class="subtitle">Start date:</span>  {{ act.start_date }}<br>-->
+                                    <span class="subtitle">End date:</span>  {{ act.end_date }}<br>
+                                </p>
+                                <input type="hidden" name="locations" value="{% for location in act.locations.all %}{{ location.idLocation}};{% endfor %}">
 
-                        </div>
+                            </div>
 
-                    </td>
-                    <td>
-                        {{ act.name }}
-                    </td>
-                    <td>
-                        {{ act.start_date }}
-                    </td>
-                    <td>
-                        {{ act.end_date }}
-                    </td>
-                    <td>
-                        {{ act.activitytype }}
-                    </td>
-                    <td>
-                        {{ act.happening }}
-                    </td>
-                    <td>
-                        {% for location in act.locations.all %}
-                        {{ location.name }} {% if not forloop.last %};{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for location in act.locations.all %}
-                        {{ location.state }} {% if not forloop.last %};{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for location in act.locations.all %}
-                        {{ location.county }} {% if not forloop.last %};{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for location in act.locations.all %}
-                        {{ location.city }} {% if not forloop.last %};{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for location in act.locations.all %}
-                        {{ location.neighborhood }} {% if not forloop.last %};{% endif %}
-                        {% endfor %}
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                        </td>
+                        <td>
+                            {{ act.name }}
+                        </td>
+                        <td>
+                            {{ act.start_date }}
+                        </td>
+                        <td>
+                            {{ act.end_date }}
+                        </td>
+                        <td>
+                            {{ act.activitytype }}
+                        </td>
+                        <td>
+                            {{ act.happening }}
+                        </td>
+                        <td>
+                            {% for location in act.locations.all %}
+                            {{ location.name }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for location in act.locations.all %}
+                            {{ location.state }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for location in act.locations.all %}
+                            {{ location.county }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for location in act.locations.all %}
+                            {{ location.city }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for location in act.locations.all %}
+                            {{ location.neighborhood }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div id="map-div"><!--class="col-md-9">-->
             <div id="map"></div>
@@ -217,7 +225,9 @@
           var state_polygon,county_polygon,city_polygon,neighborhood_polygon;
 
           $('.item').on("click", function () {
+//                alert("click on map");
                  var description = $(this).find(".description");
+
                  if(!$(this).hasClass("active")){
                      description.slideDown(100);
                      $(this).addClass("active");
