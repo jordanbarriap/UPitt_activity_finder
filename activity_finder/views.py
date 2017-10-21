@@ -7,8 +7,9 @@ from activity_finder.models import *
 def activity_finder(request):
     data={}
     data['activities']=Activity.objects.all()
+    # print(data['activities'])
     data['locations']=Location.objects.all()
-    print(data['locations'])
+    # print(data['locations'])
     data['activitytypes']=ActivityType.objects.all()
 
     return render(request, 'index.html', data)
