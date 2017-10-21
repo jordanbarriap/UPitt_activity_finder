@@ -1,0 +1,63 @@
+#reports-input{
+    margin: 0 0 10px; line-height:60px; font-size:14px;
+}
+
+#filters-div{
+    margin: 0 0 10px; line-height:60px; font-size:14px; float:left;
+}
+
+#export-div{
+    display: none; float:right; margin-right:40px; margin-bottom:5px; font-size:14px;
+}
+
+#export-div span{
+    font-size:14px;
+}
+
+.filter{
+    margin-left: 30px; margin-rigth: 30px;
+}
+
+#gridbox{
+    width:98%; height:70%; margin-left: 10px;
+}
+
+#control-div{
+    width:100%;
+}
+
+button.export-btn{
+    height:42px;
+    width:100px;
+}
+
+.button {
+    background-color: #79AEC8; /* Green */
+    border: none;
+    color: white;
+    padding: 4px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 16px;
+    width:100px;
+    height:40px;
+    font-size: 16px;
+}
+
+.button1 {
+    background-color: #79AEC8;
+    color: white;
+    border: 0.5px solid #4c9ed9;
+}
+
+.button1:hover {
+    background-color: #417690;
+    color: white;
+}
+

@@ -1,0 +1,566 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />{% endblock %}
+
+{% block coltype %}colM{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; {% if has_change_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
+&rsaquo; {% if add %}{% blocktrans with name=opts.verbose_name %}Add {{ name }}{% endblocktrans %}{% else %}{{ original|truncatewords:"18" }}{% endif %}
+</div>
+{% endblock %}
+{% endif %}
+
+{% block content %}<div id="content-main">
+{% block object-tools %}
+{% if change %}{% if not is_popup %}
+  <ul class="object-tools">
+    {% block object-tools-items %}
+    <li>
+        {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+        <a href="{% add_preserved_filters history_url %}" class="historylink">{% trans "History" %}</a>
+    </li>
+     <li>
+        <!--{% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}-->
+        <!--<a href="" class="btn export-btn btn-lg" id="pdf-btn" onclick="javascript:console.log('{{original}}');">{% trans "Print" %}</a>-->
+         <!--{% if opts.model_name == "activity" %}-->
+            <!--<button class="btn export-btn btn-lg" id="pdf-btn" onclick="generateReport();" ><span style="float:right;">PDF</span></button>-->
+         <!--{% endif %}-->
+         {% if opts.model_name == "activity" %}
+        <button class="button button1" id="pdf-btn" onclick="generateReport();">PRINT</button>
+         <!--<button id="pdf-btn" onclick="generateReport();" style="float:right; width:60px; height:26px; hover:color:red; border: #999999;background-color: #999999;cursor: pointer;text-align: center;border-radius: 15px;color: white;">PRINT</button>-->
+        {% endif %}
+     </li>
+
+    
+    {% if has_abolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}
+    {% endblock %}
+  </ul>
+{% endif %}{% endif %}
+{% endblock %}
+    <script type="text/javascript">
+        function generateReport(){
+            if("{{opts.model_name}}" == "activity"){
+                console.log("test");
+            }
+        }
+    </script>
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
+    <script>
+    function breakPage(doc,y, pageNumber){
+        doc.setFontType("regular");
+        doc.text(200,y, pageNumber+"", null, null, 'right');
+        pageNumber++;
+        doc.addPage();
+        doc.setFontSize(12);
+        doc.setFont("times");
+    }
+    function generateReport(){
+        <!--console.log('{{adminform.form.instance}}');-->
+        var doc = new jsPDF()
+        var fontSize = 12;
+        doc.setFontSize(fontSize);
+        doc.setPage(1);
+        var pageNumber = 1;
+        var today = new Date();
+        var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
+        doc.text(200, 10, date, null, null, 'right');
+        var y = 20;
+        doc.setFont("times");
+        doc.setFontType("bold");
+        doc.text("Activity name:\r\n",20, y);
+        y = y +10
+        doc.setFontType("regular");
+        doc.text('{{original.name}}',30,y);
+        y= y+10
+
+        doc.setFontType("bold");
+        doc.text("Activity type:\r\n",20, y);
+        y = y +10
+        doc.setFontType("regular");
+        doc.text('{{original.activitytype}}',30,y);
+        y= y+10
+
+        doc.setFontType("bold");
+        doc.text("Description:\r\n",20, y);
+        y = y +10
+        doc.setFontType("regular");
+        var splitname = doc.splitTextToSize('{{original.description}}', 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+        }
+        if(y >= 290){
+            doc.text(200,y, pageNumber+"", null, null, 'right');
+            pageNumber++;
+            doc.addPage();
+            y = 20;
+            doc.setFontSize(fontSize);
+            doc.setFont("times");
+        }
+
+        doc.setFontType("bold");
+        doc.text("Happening: ",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        if('{{original.happening}}' == "False")
+            doc.text("no",30, y);
+        else
+            doc.text("yes",30, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("Start date:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        doc.text('{{original.start_date}}',30,y);
+        y= y+10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("End date:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        doc.text('{{original.end_date}}',30,y);
+        y= y+10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("Outcomes:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        var splitname = doc.splitTextToSize('{{original.outcomes}}', 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+        }
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("Funding:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        doc.text('{{original.funding}}',30,y);
+        y= y+10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("Unit notes:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        doc.text('{{original.unitNotes}}',30,y);
+        y= y+10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("Contact information:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        doc.text('{{original.people}}'+" ("+'{{original.people.email}}'+")",30,y);
+        y= y+10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("University leaders:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        var str = "";
+        {% for p in original.universityleaders.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            splitname = doc.splitTextToSize(str, 160);
+        {% endfor %}
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+        }
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+
+        doc.setFontType("bold");
+        doc.text("Focus areas:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.focusareas.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+        doc.setFontType("bold");
+        doc.text("Locations:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.locations.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+        doc.setFontType("bold");
+        doc.text("Schools:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.schools.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+        doc.setFontType("bold");
+        doc.text("Units:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.units.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+        doc.setFontType("bold");
+        doc.text("Populations:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.populations.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+        doc.setFontType("bold");
+        doc.text("Served neighbourhoods:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.servedneighbourhoods.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+        doc.setFontType("bold");
+        doc.text("Courses:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.courses.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+        doc.setFontType("bold");
+        doc.text("Community partners:\r\n",20, y);
+        y = y +10
+        if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("regular");
+        str = "";
+        {% for p in original.communitypartners.all %}
+            if(str != "")
+                str = str+ "; ";
+            str=str + '{{p}}';
+            str = str.replace("amp;","");
+        {% endfor %}
+        splitname = doc.splitTextToSize(str, 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+             if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        }
+
+       if(y >= 290){
+                breakPage(doc, y, pageNumber);
+                pageNumber++;
+                y = 20;
+             }
+        doc.setFontType("bold");
+        doc.text("Reviewed:\r\n",20, y);
+        y = y +10
+        doc.setFontType("regular");
+        doc.text('{{original.reviewed}}',30,y);
+
+        //loop thru each line and output while increasing the vertical space
+        <!--console.log("hung");-->
+        <!--console.log(splitname.length);-->
+        <!--for(var c = 0, stlength = splitname.length ; c < stlength ; c++){-->
+            <!--doc.text(20, y, splitname[c]);-->
+             <!--y = y + 10;-->
+        <!--}-->
+        <!--doc.text(splitname, 10, 10);-->
+        while(y < 290)
+            y = y+10;
+        doc.text(200,y, pageNumber+"", null, null, 'right');
+        doc.save('{{original.name}}'+'.pdf')
+
+    }
+
+
+</script>
+    <div>
+{% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
+{% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
+{% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
+{% if errors %}
+    <p class="errornote">
+    {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+    </p>
+    {{ adminform.form.non_field_errors }}
+{% endif %}
+
+{% block field_sets %}
+{% for fieldset in adminform %}
+  {% include "admin/includes/fieldset.html" %}
+{% endfor %}
+{% endblock %}
+
+{% block after_field_sets %}{% endblock %}
+
+{% block inline_field_sets %}
+{% for inline_admin_formset in inline_admin_formsets %}
+    {% include inline_admin_formset.opts.template %}
+{% endfor %}
+{% endblock %}
+
+{% block after_related_objects %}{% endblock %}
+
+{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+
+{% block admin_change_form_document_ready %}
+    <script type="text/javascript"
+            id="django-admin-form-add-constants"
+            src="{% static 'admin/js/change_form.js' %}"
+            {% if adminform and add %}
+                data-model-name="{{ opts.model_name }}"
+            {% endif %}>
+    </script>
+{% endblock %}
+
+{# JavaScript for prepopulated fields #}
+{% prepopulated_fields_js %}
+
+</div>
+</form></div>
+{% endblock %}
+

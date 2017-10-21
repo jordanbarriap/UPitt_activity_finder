@@ -1,0 +1,47 @@
+Django framework for backend and for administrators-> Search for information about admin template extension
+	MySQL database
+	Client: javascript+jQuery (bootstrap for style)
+
+
+	Tables:
+	Activity -> id, name, description, current_happening, start_date, end_date, output/outcomes, school (many), departments (many), funding
+	Community partner -> id, name, addressUp
+	Population-> id, name (mandatory)
+	Focus area -> id, name (mandatory), reviewed
+	Activity type -> id, name
+	School->id, name (are they optional?)
+	Department->id, name (are they optional?)
+	Course->code, name
+	Location -> id, name, optional address(?)
+	People (including leaders and contact person)->first name, last name, email, type
+	Served people neighbourhood
+
+
+	Questions:
+	1. What is the limit for schools, departments, courses and contact information (i.e., 2 schools per each activity)? 
+	a. 3 schools, 3 departments, 3 courses but only 1 contact information – the contact information is meant to be used to contact the overall activity on the Pitt side. 
+	
+	2. What is "unit notes"? (I think unit is refering to department)  -- LETS CHANGE THIS TO READ, PROGRAM
+	a. Unit notes is a section where a respondent can add notation about how the activity is a part of special programs or work of the unit. For example, one of our respondents wrote the activity (Wellness Pavilion) is located in the School of Health and Rehabilitation Sciences, in the Occupational Therapy and Physical Therapy departments, but in the notes noted that it is a Program for Health Care to Underserved Populations (PHUCP). 
+	
+	3. What is the difference between Location and "Neighborhood of who is served"?
+	a. The activity might happen at a particular street address, but the people who are being served might come from multiple neighborhoods. We should allow up to 10 neighborhoods. 
+	
+	4. Is contact information associated with the whole activity, or with a community partner? 
+	a. Contact Name and Contact Email is associated with the whole activity (versus Community Partner Street Address which is specifically for the community partner)
+	
+	5. Is it needed to create a separate table for contact, or the contact is an arbitrary information depending on each activity?
+	a. Yes, a separate table. 
+	
+	6. About the queries you sent us, is the place equals to the location in the excel file?
+	a. Yes. Please = Location, which we will need up to 10 per activity. 
+	
+DJANGO:
+CREATE A NEW APP
+- python manage.py startapp [name_of_the_app]
+- Edit urls.python
+- Add view
+
+
+NOTES:
+1. Need to change the size (longer) of the charfield (textbox)

@@ -1,0 +1,260 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ title }} Pitt side admin{% endblock title%}
+
+{% block content_title %}{% if title %}<h1>Pitt side administration</h1>{% endif %}{% endblock content_title%}
+
+{% block extrastyle %}
+<style>
+    #header{
+    background-color: #111150;;
+    }
+    <!--<link rel="icon" type="image/png" href="https://www.w3schools.com/css/trolltunga.jpg" />-->
+</style>
+{% endblock extrastyle%}
+
+{% block extrahead %}
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+
+    <!--<link rel="stylesheet" type="text/css" href="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.css" %}">-->
+    <script src="{% static "/js/dhtmlxGrid_v51_std/codebase/dhtmlxgrid.js" %}"></script>
+
+    <!--<link rel="stylesheet" type="text/css" href="{% static "/css/UPitt-style/css/main.css" %}">-->
+    <link rel="stylesheet" type="text/css" href="{% static "/css/reports.css" %}">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/TableExport/3.2.5/css/tableexport.min.css">
+
+
+    <script type="text/javascript" src="{% static "/js/tableExport/tableExport.js" %}"></script>
+    <script type="text/javascript" src="{% static "/js/tableExport/jquery.base64.js" %}"></script>
+    <script type="text/javascript" src="{% static "/js/tableExport/html2canvas.js" %}"></script>
+    <script type="text/javascript" src="{% static "/js/tableExport/jspdf/libs/sprintf.js" %}"></script>
+    <script type="text/javascript" src="{% static "/js/tableExport/jspdf/jspdf.js" %}"></script>
+    <script type="text/javascript" src="{% static "/js/tableExport/jspdf/libs/base64.js" %}"></script>
+{% endblock extrahead%}
+
+
+{% block content %}
+<div id="reports-input">
+    <span id="reports-span">Choose the data you want to report:</span>
+    <select id="entities-cb">
+        <option disabled selected value> -- Select a value -- </option>
+        {% for entity in entities %}
+            {% if entity != "Activity"%}
+            <option value="{{ entity }}">{{ entity }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <input type="checkbox" id="outcome-cb" value="checked" style="margin-left:10px;"><label> Outcome</label>
+    <input type="checkbox" id="details-cb" value="checked" style="margin-left:10px;"><label> Activity Details</label>
+    </br>
+    <button disabled id="add-filter-btn" class="button button1">Add filter</button>
+    <!--<button disabled id="add-filter-btn" style="float:left;width:100px;height:50px; margin-top:10px; font-size: 15px; cursor: pointer; border: true; background-color: #7baec7;">Add filter</button>-->
+
+    <!--<ul class="object-tools">-->
+            <!--<li>-->
+              <!--<a href="#" class="addlink">-->
+                <!--test-->
+              <!--</a>-->
+            <!--</li>-->
+        <!--</ul>-->
+</div>
+
+<div id=control-div">
+<div id="filters-div">
+</div>
+<div id="export-div">
+    <span> Export data: </span>
+    <button class="btn export-btn btn-lg" id="xls-btn" style="background: white url('{% static 'image/excel-icon.png' %}') no-repeat;background-size: 40px 40px;"><span style="float:right;">Excel</span></button>
+    <button class="btn export-btn btn-lg" id="pdf-btn" style="background: white url('{% static 'image/pdf-icon.png' %}') no-repeat;background-size: 40px 40px;"><span style="float:right;">PDF</span></button>
+</div>
+</div>
+
+<!--<a href="#" onClick ="$('.objbox table').tableExport({type:'excel',escape:'false',tableName:'report'});">XLS</a>
+<a href="#" onClick ="$('.objbox table').tableExport({type:'csv',escape:'false',tableName:'report'});">CSV</a>
+<a href="#" onClick ="$('.objbox table').tableExport({type:'pdf',escape:'false', pdfFontSize:7, tableName:'report'});">PDF</a>-->
+<div id="gridbox" style="height:450px;"></div>
+
+<script>
+
+    var selected_entity = $('#entities-cb :selected').text();
+    console.log(selected_entity)
+
+    var selected_field;
+    var selected_field_type;
+    var filters;
+
+    var current_filter=1;
+
+    var mygrid = new dhtmlXGridObject('gridbox');
+
+    //the path to images required by grid
+    //mygrid.setImagePath("./codebase/imgs/");
+
+
+    $("select#entities-cb").change(function(){
+
+       selected_entity = $('#entities-cb :selected').text();
+
+       $("#filters-div").empty();//Clean additional info filters if any
+
+
+       var jqxhr = $.get( "/admin/reports/get_table", {'entity': selected_entity, 'outcome':document.getElementById("outcome-cb").checked, 'details':document.getElementById("details-cb").checked} , function(data) {
+          var header = data.columns.join();
+          mygrid.clearAll(true);
+          mygrid=new dhtmlXGridObject('gridbox');
+          <!--mygrid.enableAutoWidth(true);-->
+          //mygrid.setHeader("Sales,Book title,Author,Price");//the headers of columns
+
+          var temp = header +"";
+          var partsOfStr = temp.split(',');
+          var strHeader = "Hung Chau";
+          var today = new Date();
+          var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
+          var strHeader = "Filtered by " +selected_entity+" ("+date+")";
+          for( i =1 ;  i < partsOfStr.length; i++)
+                strHeader = strHeader+",#cspan";
+          <!--console.log(strHeader);-->
+
+          mygrid.setHeader(strHeader);//the headers of columns
+          var filter = data.filters.join();
+          mygrid.attachHeader(header);
+          mygrid.attachHeader(filter);
+                    <!--mygrid.attachFooter(filter);-->
+          //mygrid.setInitWidths("100,250,150,100");          //the widths of columns
+          //mygrid.setColAlign("right,left,left,left");       //the alignment of columns
+          //mygrid.setColTypes("ro,ed,ed,ed");                //the types of columns
+          //mygrid.setColSorting("int,str,str,int");          //the sorting types
+          mygrid.setColSorting(data.types.join());          //the sorting types
+          mygrid.init();      //finishes initialization and renders the grid on the page
+          mygrid.parse(data.data,"json"); //takes the name and format of the data source
+          <!--console.log(data);-->
+
+          $("#add-filter-btn").prop('disabled', false); //enable the addition of filters
+
+          $("#export-div").show();//show export buttons
+
+          //exportTable();
+        })
+          .fail(function() {
+            alert( "something wrong here" );
+          });
+    });
+    $("#add-filter-btn").click(function(){
+        var jqxhr = $.get( "/admin/reports/get_filters", {'entity': selected_entity}, function(data) {
+          filters = data.filters;
+          console.log(filters);
+          selected_entity = $('#entities-cb :selected').text();
+
+        $("#filters-div").append("<select class='filter' id='filter"+current_filter+"'></select>");
+        $("#filter"+current_filter).append("<option disabled selected value> -- Select a value -- </option>");
+
+        for(var i=0; i<filters.length; i++){
+            $("#filter"+current_filter).append("<option value='"+filters[i]+"'>"+filters[i]+"</option>");
+        }
+
+        $("#filter"+current_filter).change(function(){
+            var parameters = {};
+            parameters["entity1"]=selected_entity
+            var filterNames = ""
+            var n_ent = 2
+            $('.filter  option:selected').each(function() {
+                if($(this).text()!=""){
+                    parameters["entity"+n_ent] = $(this).text();
+                    n_ent = n_ent + 1;
+                }
+            });
+
+            parameters["num_entities"]=Object.keys(parameters).length;
+            parameters["outcome"]=document.getElementById("outcome-cb").checked;
+            parameters["details"]=document.getElementById("details-cb").checked;
+            console.log(parameters);
+            selected_filter = this.value;
+            //selected_field = this.value;
+            mygrid.clearAll(true);
+            mygrid=new dhtmlXGridObject('gridbox');
+
+            $.ajax({url: "/admin/reports/get_subtable",
+                type: "get",
+                data: parameters,
+                success: function (new_data) {
+                  var new_header = new_data.columns.join();
+
+                  var temp = new_header +"";
+                  var partsOfStr = temp.split(',');
+                  var today = new Date();
+                  var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
+                  var filterNames = "";
+                  for (i = 1; i < n_ent; i++)
+                  {
+                        if(i + 1  < n_ent)
+                            filterNames = filterNames + parameters["entity"+(i)]+" - ";
+                        if(i + 1 == n_ent)
+                            filterNames = filterNames + parameters["entity"+(i)];
+                  }
+                  var strHeader = "Filtered by " +filterNames+" ("+date+")";
+                  for( i =1 ;  i < partsOfStr.length; i++)
+                        strHeader = strHeader+",#cspan";
+                  <!--console.log(strHeader);-->
+
+                  mygrid.setHeader(strHeader);//the headers of columns
+
+                  var new_filter = new_data.filters.join();
+                  mygrid.attachHeader(new_header);
+                  mygrid.attachHeader(new_filter);
+                  //mygrid.setInitWidths("100,250,150,100");          //the widths of columns
+                  //mygrid.setColAlign("right,left,left,left");       //the alignment of columns
+                  //mygrid.setColTypes("ro,ed,ed,ed");                //the types of columns
+                  //mygrid.setColSorting("int,str,str,int");          //the sorting types
+                  mygrid.setColSorting(new_data.types.join());          //the sorting types
+                  mygrid.init();      //finishes initialization and renders the grid on the page
+                  mygrid.parse(new_data.data,"json"); //takes the name and format of the data source
+                  console.log(new_data.data);
+
+                }
+            });
+
+            //exportTable()
+
+            current_filter++;
+
+        });
+      });
+    });
+
+    $("#xls-btn").click(function(){
+        //exporting to Excel by using the online export service
+        <!--var today = new Date();-->
+        <!--var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();-->
+         <!--var newId = "rowDate";-->
+        <!--mygrid.addRow(newId,"Report date:\r\n"+date);-->
+         <!--mygrid.enableColSpan(true);-->
+        <!--mygrid.setColspan(newId,0,2);-->
+        <!--mygrid.addRow("rowBlank","");-->
+
+        mygrid.toExcel("http://dhtmlxgrid.appspot.com/export/excel", 'bw');
+        <!--mygrid.deleteRow(newId);-->
+        <!--mygrid.deleteRow("rowBlank");-->
+    });
+
+    $("#pdf-btn").click(function(){
+        <!--var today = new Date();-->
+        <!--var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();-->
+        <!--var newId = "rowDate";-->
+        <!--mygrid.addRow(newId,"Report date:\r\n"+date);-->
+        <!--mygrid.enableColSpan(true);-->
+        <!--mygrid.setColspan(newId,0,2);-->
+        <!--//exporting to PDF by using the online export service-->
+        mygrid.toPDF("http://dhtmlxgrid.appspot.com/export/pdf", 'bw');
+        <!--mygrid.deleteRow(newId);-->
+        <!--mygrid.toPDF("file:///Library/apache-tomcat-6.0.45/webapps/grid-pdf-php/generate.php");-->
+    });
+</script>
+{% endblock content%}
