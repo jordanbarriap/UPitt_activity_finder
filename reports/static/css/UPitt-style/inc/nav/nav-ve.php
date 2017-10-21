@@ -1,1 +1,0 @@
-<link rel="stylesheet" href="css/nav-vertical-expanded.css" type="text/css" media="screen">
