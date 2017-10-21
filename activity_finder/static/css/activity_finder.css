@@ -7,7 +7,7 @@
     /*overflow-y:auto;*/
 }
 #acts-table-1{
-    height: 90%;
+    height: 95%;
     overflow-y:auto;
 }
 #header{
@@ -86,9 +86,14 @@ table.dataTable thead .sorting_desc {
 div.instruction{
     padding-left: 4px;
     font-style: italic;
-    font-size: 14px;
+    font-size: 13px;
     color: #0066cc;
-    border-style: none none solid none;
+    line-height: 100%;
+    margin-bottom: 5px;
+    /*border-style: none none solid none;
     border-color: black;
-    border-width: thin;
+    border-width: thin;*/
+}
+.description-text{
+    font-size: 15px;
 }

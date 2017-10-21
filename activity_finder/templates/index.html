@@ -125,7 +125,7 @@
     </div>
     <div id="content-div">
         <div id="acts-table">
-            <div class="instruction">To learn more about each of the activities below, click on the name of the activity</div>
+            <div class="instruction">To learn more about each of the activities below, click on the name of the activity. If you want to go back to see an overview of all the activities, just click anywhere on the map.</div>
             <div id="acts-table-1"> <!-- class="col-md-3">-->
                 <table id="table_id" class="display">
                     <thead>
@@ -136,22 +136,28 @@
                     <tbody>
                     {% for act in activities %}
                     <tr>
-                        <td class="item">
+                        <td id="{{act.idActivity}}" class="item">
                             <div><!-- class="item">-->
                                 <span class="title">{{ act.name }}</span>
                                 <p class="description">
                                     <br>
-                                    <i>{{ act.description }}</i><br><br>
-                                    <span class="subtitle">Location(s): {% for location in act.locations.all %}
-                                                {{ location.name }} {% if not forloop.last %},{% endif %}
-                                             {% endfor %}</span><br>
+                                    {% if act.description != 'NONE' %}
+                                    <i><span class="description-text">{{ act.description }}</span></i><br><br>
+                                    {% endif %}
+                                    <span class="subtitle">Location(s): </span><br>{% for location in act.locations.all %}
+                                    <span class="subtitle-text">- {{ location.address }}</span> {% if not forloop.last %}<br>{% endif %}
+                                             {% endfor %}<br>
                                     <span class="subtitle">Contact Name:</span>  <span class="subtitle-text">{{ act.contactInformation }}</span><br>
                                     <span class="subtitle">Contact Email:</span>  <span class="subtitle-text">{{ act.communitypartner }}</span><br>
                                     <span class="subtitle">Community Partners:</span>  <span class="subtitle-text">{{ act.activitytype }}</span><br>
-                                    <span class="subtitle">Webpage:</span>  <span class="subtitle-text"><a href="{{ act.webpage_associated_with_activity }}">{{ act.webpage_associated_with_activity }}</a></span><br>
+                                    {% if act.webpage_associated_with_activity != 'NONE' %}
+                                        <span class="subtitle">Webpage:</span>  <span class="subtitle-text"><a href="{{ act.webpage_associated_with_activity }}">{{ act.webpage_associated_with_activity }}</a></span><br>
+                                    {% endif %}
                                     <span class="subtitle">Category:</span>  <span class="subtitle-text">{{ act.activitytype }}</span><br>
                                     <!--<span class="subtitle">Start date:</span>  {{ act.start_date }}<br>-->
-                                    <span class="subtitle">End date:</span>  <span class="subtitle-text">{{ act.end_date }}</span><br>
+                                    {% if act.estimated_end_date != None %}
+                                    <span class="subtitle">End date:</span>  <span class="subtitle-text">{{ act.estimated_end_date }}</span><br>
+                                    {% endif %}
                                 </p>
                                 <input type="hidden" name="locations" value="{% for location in act.locations.all %}{{ location.idLocation}};{% endfor %}">
 
@@ -231,7 +237,7 @@
           var id_clicked_marker = "";
 
           $('.item').on("click", function () {
-//                alert("click on map");
+
                  var description = $(this).find(".description");
 
                  if(!$(this).hasClass("active")){
@@ -264,6 +270,7 @@
                     description.slideUp(100);
                     $(this).removeClass("active");
                     notHighlightMarkers();
+
                  }
 
           });
@@ -918,7 +925,7 @@
         var activities_string= "";
         var activities_ids=[];
         {%for act in loc.activities%}
-            activities_string = activities_string+"<br><li>{{act.name}}</li>";
+            activities_string = activities_string+"<li>{{act.name}}</li>";
             activities_ids.push("{{act.idActivity}}");
         {% endfor %}
         if(activities_string!=""){
@@ -929,7 +936,7 @@
                 id: "{{loc.idLocation}}",
                 mapTypeId: 'terrain'
             });
-            makeInfoWindowEvent(map, info_window, "<b>Activities:</b><ul>"+activities_string+"</ul><b>Address: </b>{{loc.address}}", activities_ids, marker);
+            makeInfoWindowEvent(map, info_window, "<b>Activities:</b><ul>"+activities_string+"</ul><b>Address: </b><br>{{loc.address}}", activities_ids, marker);
             markers_array[marker["id"]]=marker;
         }
         {% endfor %}
@@ -942,7 +949,15 @@
                 notHighlightMarkers();
                 $('#table_id').DataTable().column(11).search("").draw();
                 marker_clicked=false;
+                id_clicked_marker="";
             }
+
+            var id_active_activity = $(".active").attr("id");
+
+            if($("#"+id_active_activity).length>0){
+                $("#"+id_active_activity).click();
+            }
+
         });
 
     };
@@ -1000,27 +1015,35 @@
                 activities_ids_search_string=activities_ids_search_string+'^'+activities_ids[i]+'$|';
             }
             activities_ids_search_string = activities_ids_search_string.substr(0,activities_ids_search_string.length-1);
-            console.log(activities_ids_search_string);
             info_window.setContent(content_string);
             info_window.open(map, marker);
             $('#table_id').DataTable().column(11).search(activities_ids_search_string,true,false).draw();
             highlightMarkers([marker.id])
             marker_clicked=true;
             id_clicked_marker = marker.id;
+            if(activities_ids.length==1){
+                $("td#"+activities_ids[0]).click();
+            }
         }else{
+            if(marker_clicked){
+                if(activities_ids.length==1){
+                    $("td#"+activities_ids[0]).click();
+                }
+            }
             $('#table_id').DataTable().column(11).search("").draw();
             notHighlightMarkers();
             marker_clicked = false;
             id_clicked_marker = "";
+
         }
 
       });
-
+      //Map marker mouseover event
       marker.addListener('mouseover', function() {
           info_window.setContent(content_string);
           info_window.open(map, this);
       });
-
+      //Map marker mouseout event
       // assuming you also want to hide the infowindow when user mouses-out
         marker.addListener('mouseout', function() {
             info_window.close();
