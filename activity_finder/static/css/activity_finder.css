@@ -53,10 +53,14 @@ tr{
 }
 .subtitle{
     font-weight: bold;
+    font-size: 14px;
     color: #111150;
 }
+.subtitle-text{
+    font-size: 14px;
+}
 .title{
-    font-size: 20px;
+    font-size: 16px;
     color: #111150;
 }
 .title.active{
@@ -82,7 +86,7 @@ table.dataTable thead .sorting_desc {
 div.instruction{
     padding-left: 4px;
     font-style: italic;
-    font-size: 16px;
+    font-size: 14px;
     color: #0066cc;
     border-style: none none solid none;
     border-color: black;

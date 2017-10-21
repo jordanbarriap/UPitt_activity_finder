@@ -142,16 +142,16 @@
                                 <p class="description">
                                     <br>
                                     <i>{{ act.description }}</i><br><br>
-                                    <span class="subtitle">Location(s):</span>  {% for location in act.locations.all %}
+                                    <span class="subtitle">Location(s): {% for location in act.locations.all %}
                                                 {{ location.name }} {% if not forloop.last %},{% endif %}
-                                             {% endfor %}<br>
-                                    <span class="subtitle">Contact Name:</span>  {{ act.contactInformation }}<br>
-                                    <span class="subtitle">Contact Email:</span>  {{ act.communitypartner }}<br>
-                                    <span class="subtitle">Community Partners:</span>  {{ act.activitytype }}<br>
-                                    <span class="subtitle">Webpage:</span>  {{ act.activitytype }}<br>
-                                    <span class="subtitle">Category:</span>  {{ act.activitytype }}<br>
+                                             {% endfor %}</span><br>
+                                    <span class="subtitle">Contact Name:</span>  <span class="subtitle-text">{{ act.contactInformation }}</span><br>
+                                    <span class="subtitle">Contact Email:</span>  <span class="subtitle-text">{{ act.communitypartner }}</span><br>
+                                    <span class="subtitle">Community Partners:</span>  <span class="subtitle-text">{{ act.activitytype }}</span><br>
+                                    <span class="subtitle">Webpage:</span>  <span class="subtitle-text"><a href="{{ act.webpage_associated_with_activity }}">{{ act.webpage_associated_with_activity }}</a></span><br>
+                                    <span class="subtitle">Category:</span>  <span class="subtitle-text">{{ act.activitytype }}</span><br>
                                     <!--<span class="subtitle">Start date:</span>  {{ act.start_date }}<br>-->
-                                    <span class="subtitle">End date:</span>  {{ act.end_date }}<br>
+                                    <span class="subtitle">End date:</span>  <span class="subtitle-text">{{ act.end_date }}</span><br>
                                 </p>
                                 <input type="hidden" name="locations" value="{% for location in act.locations.all %}{{ location.idLocation}};{% endfor %}">
 
@@ -198,6 +198,9 @@
                             {{ location.neighborhood }} {% if not forloop.last %};{% endif %}
                             {% endfor %}
                         </td>
+                        <td>
+                            {{act.idActivity}}
+                        </td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -223,6 +226,9 @@
           var neighborhoods_data_array = new Array();
           var map;
           var state_polygon,county_polygon,city_polygon,neighborhood_polygon;
+
+          var marker_clicked = false;
+          var id_clicked_marker = "";
 
           $('.item').on("click", function () {
 //                alert("click on map");
@@ -282,7 +288,8 @@
                             { "visible": false },//states
                             { "visible": false },//counties
                             { "visible": false },//cities
-                            { "visible": false }//neighborhoods
+                            { "visible": false },//neighborhoods
+                            { "visible": false}//activity id
                          ],
                     });
                     {% for act in activities %}
@@ -901,13 +908,20 @@
         }
         var mapProp= {
             center:new google.maps.LatLng(40.444269,-79.953260),
-            zoom:10,
+            zoom:13,
         };
 
         var info_window = new google.maps.InfoWindow();
 
         map=new google.maps.Map(document.getElementById("map"),mapProp);
         {% for loc in locations %}
+        var activities_string= "";
+        var activities_ids=[];
+        {%for act in loc.activities%}
+            activities_string = activities_string+"<br><li>{{act.name}}</li>";
+            activities_ids.push("{{act.idActivity}}");
+        {% endfor %}
+        if(activities_string!=""){
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng({{loc.position}}),
                 map: map,
@@ -915,12 +929,21 @@
                 id: "{{loc.idLocation}}",
                 mapTypeId: 'terrain'
             });
-            makeInfoWindowEvent(map, info_window, "{{loc.name}}<br>{{loc.address}}", marker);
+            makeInfoWindowEvent(map, info_window, "<b>Activities:</b><ul>"+activities_string+"</ul><b>Address: </b>{{loc.address}}", activities_ids, marker);
             markers_array[marker["id"]]=marker;
+        }
         {% endfor %}
 
 
         google.maps.event.trigger(map, 'resize');
+
+        google.maps.event.addListener(map, 'click', function(event){
+            if(marker_clicked){
+                notHighlightMarkers();
+                $('#table_id').DataTable().column(11).search("").draw();
+                marker_clicked=false;
+            }
+        });
 
     };
 
@@ -941,7 +964,6 @@
                 markers_array[i].setOpacity(1.0);
             }
         }*/
-        console.log(markers_ids_array);
         for (var i=0;i<markers_array.length;i++){
             if(markers_array[i]){
                 if(markers_ids_array.indexOf(String(i))!=-1){
@@ -969,10 +991,39 @@
         }*/
     }
 
-    function makeInfoWindowEvent(map, info_window, content_string, marker) {
+    function makeInfoWindowEvent(map, info_window, content_string, activities_ids, marker) {
       google.maps.event.addListener(marker, 'click', function() {
-        info_window.setContent(content_string);
-        info_window.open(map, marker);
+        event.preventDefault();
+        if(!marker_clicked || (marker_clicked && id_clicked_marker!=marker.id)){
+            var activities_ids_search_string = '';
+            for(var i=0;i<activities_ids.length;i++){
+                activities_ids_search_string=activities_ids_search_string+'^'+activities_ids[i]+'$|';
+            }
+            activities_ids_search_string = activities_ids_search_string.substr(0,activities_ids_search_string.length-1);
+            console.log(activities_ids_search_string);
+            info_window.setContent(content_string);
+            info_window.open(map, marker);
+            $('#table_id').DataTable().column(11).search(activities_ids_search_string,true,false).draw();
+            highlightMarkers([marker.id])
+            marker_clicked=true;
+            id_clicked_marker = marker.id;
+        }else{
+            $('#table_id').DataTable().column(11).search("").draw();
+            notHighlightMarkers();
+            marker_clicked = false;
+            id_clicked_marker = "";
+        }
+
+      });
+
+      marker.addListener('mouseover', function() {
+          info_window.setContent(content_string);
+          info_window.open(map, this);
+      });
+
+      // assuming you also want to hide the infowindow when user mouses-out
+        marker.addListener('mouseout', function() {
+            info_window.close();
       });
     }
 
