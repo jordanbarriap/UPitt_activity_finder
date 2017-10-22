@@ -205,6 +205,8 @@
                                     <!--<span class="subtitle">Start date:</span>  {{ act.start_date }}<br>-->
                                     {% if act.estimated_end_date != None %}
                                     <span class="subtitle">End date:</span>  <span class="subtitle-text">{{ act.estimated_end_date }}</span><br>
+                                    {% else %}
+                                    <span class="subtitle">End date:</span>  <span class="subtitle-text">ongoing</span><br>
                                     {% endif %}
                                 </p>
                                 <input type="hidden" name="locations" value="{% for location in act.locations.all %}{{ location.idLocation}};{% endfor %}">
