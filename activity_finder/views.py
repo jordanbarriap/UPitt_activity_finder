@@ -10,6 +10,6 @@ def activity_finder(request):
     # print(data['activities'])
     data['locations']=Location.objects.all()
     # print(data['locations'])
-    data['activitytypes']=ActivityType.objects.all()
+    data['activitytypes']=CommunityPartner.objects.all()
 
     return render(request, 'index.html', data)
