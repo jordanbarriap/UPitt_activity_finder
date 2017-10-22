@@ -55,17 +55,18 @@
             <!--<div class="filter" id="past-activities">-->
                 <!--Hide past activities?<br><input type="checkbox" id="happen_filter" style="display:none;" data-group-cls="btn-group-sm" data-reverse>-->
             <!--</div>-->
-            <div class="filter">
-                Activity Type:<br>
-                <select id="selectActivity" class="form-control form-control-sm" onchange="searchActivityType()">
-                    <option value="">All</option>
-                    {% for act in activitytypes %}
-                    <!--<div class="item">-->
-                        <option value={{ act.name }}>{{ act.name }}</option>
-                    <!--</div>-->
-                    {% endfor %}
-                </select>
-            </div>
+            <!--<div class="filter">-->
+                <!--Activity Type:<br>-->
+                <!--<select id="selectActivity" class="form-control form-control-sm" onchange="searchActivityType()">-->
+                    <!--<option value="">All</option>-->
+                    <!--{% for act in activitytypes %}-->
+                    <!--&lt;!&ndash;<div class="item">&ndash;&gt;-->
+                        <!--<option value={{ act.name }}>{{ act.name }}</option>-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--{% endfor %}-->
+                <!--</select>-->
+            <!--</div>-->
+
             <!--<div class="filter">-->
                 <!--Sort by:<br>-->
                 <!--<div class="btn-group" data-toggle="buttons">-->
@@ -114,12 +115,46 @@
                 <!--</div>-->
                 <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
                 <div class="location-filter">
-                    Neighborhood:<br>
+                    Location:<br>
                     <select id="selectNeighborhood" class="form-control form-control-sm"  onchange="searchNeighborhood(this.value)">
                         <option value="">All</option>
                     </select>
                 </div>
             </div>
+             <div class="filter">
+                Focus Area:<br>
+                <select id="selectFocusArea" class="form-control form-control-sm" onchange="searchFocusArea()">
+                    <option value="">All</option>
+                    {% for area in focusareas %}
+                    <!--<div class="item">-->
+                        <option value={{ area.name }}>{{ area.name }}</option>
+                    <!--</div>-->
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter">
+                Population Served:<br>
+                <select id="selectPopulation" class="form-control form-control-sm" onchange="searchPopulation()">
+                    <option value="">All</option>
+                    {% for population in populations_served %}
+                    <!--<div class="item">-->
+                        <option value={{ population.name }}>{{ population.name }}</option>
+                    <!--</div>-->
+                    {% endfor %}
+                </select>
+            </div>
+            <!--<div class="filter">-->
+                <!--Community Partner:<br>-->
+                <!--<select id="selectPartner" class="form-control form-control-sm" onchange="searchPartner()">-->
+                    <!--<option value="">All</option>-->
+                    <!--{% for partner in communitypartners %}-->
+                    <!--&lt;!&ndash;<div class="item">&ndash;&gt;-->
+                        <!--<option value={{ partner.name }}>{{ partner.name }}</option>-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--{% endfor %}-->
+                <!--</select>-->
+            <!--</div>-->
+
 
         </div>
     </div>
@@ -147,9 +182,22 @@
                                     <span class="subtitle">Location(s): </span><br>{% for location in act.locations.all %}
                                     <span class="subtitle-text">- {{ location.address }}</span> {% if not forloop.last %}<br>{% endif %}
                                              {% endfor %}<br>
-                                    <span class="subtitle">Contact Name:</span>  <span class="subtitle-text">{{ act.contactInformation }}</span><br>
-                                    <span class="subtitle">Contact Email:</span>  <span class="subtitle-text">{{ act.communitypartner }}</span><br>
-                                    <span class="subtitle">Community Partners:</span>  <span class="subtitle-text">{{ act.activitytype }}</span><br>
+                                    <!--<span class="subtitle">Contact Name:</span>{% for contact in act.contactInformation.all %}-->
+                                    <!--<span class="subtitle-text">{{ contact.first_name}}</span>{% if not forloop.last %}<br>{% endif %}-->
+                                             <!--{% endfor %}<br>-->
+                                    <span class="subtitle">Contact Name:</span>
+                                    <span class="subtitle-text">{{ act.people}}</span><br>
+                                    <span class="subtitle">Contact Email:</span>  <span class="subtitle-text">{{ act.people.email }}</span><br>
+                                    <!--<span class="subtitle">Community Partner(s):</span>  <span class="subtitle-text">{{ act.communitypartners }}</span><br>-->
+                                    <span class="subtitle">Community Partner(s): </span><br>{% for partner in act.communitypartners.all %}
+                                    <span class="subtitle-text">- {{ partner.name }}</span> {% if not forloop.last %}<br>{% endif %}
+                                             {% endfor %}<br>
+                                    <span class="subtitle">Focus Area(s): </span><br>{% for area in act.focusareas.all %}
+                                    <span class="subtitle-text">- {{ area.name }}</span> {% if not forloop.last %}<br>{% endif %}
+                                             {% endfor %}<br>
+                                    <span class="subtitle">Population Served: </span><br>{% for population in act.populations_served.all %}
+                                    <span class="subtitle-text">- {{ population.name }}</span> {% if not forloop.last %}<br>{% endif %}
+                                             {% endfor %}<br>
                                     {% if act.webpage_associated_with_activity != 'NONE' %}
                                         <span class="subtitle">Webpage:</span>  <span class="subtitle-text"><a href="{{ act.webpage_associated_with_activity }}">{{ act.webpage_associated_with_activity }}</a></span><br>
                                     {% endif %}
@@ -173,11 +221,23 @@
                         <td>
                             {{ act.end_date }}
                         </td>
+                        <!--<td>-->
+                            <!--{% for partner in act.communitypartners.all %}-->
+                            <!--{{ partner.name }} {% if not forloop.last %};{% endif %}-->
+                            <!--{% endfor %}-->
+                        <!--</td>-->
                         <td>
-                            {{ act.activitytype }}
+                            {% for population in act.populations_served.all %}
+                            {{ population.name }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
                         </td>
+                        <!--<td>-->
+                            <!--{{ act.activitytype }}-->
+                        <!--</td>-->
                         <td>
-                            {{ act.happening }}
+                            {% for area in act.focusareas.all %}
+                            {{ area.name }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
                         </td>
                         <td>
                             {% for location in act.locations.all %}
@@ -207,6 +267,7 @@
                         <td>
                             {{act.idActivity}}
                         </td>
+
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -437,13 +498,48 @@
                 var value = obj.options[index].value;
                 $('#table_id').DataTable().column(3).search(value).draw();
           }
+           function searchPartner()
+          {
+                var obj=document.getElementById("selectPartner");
+                var index = obj.selectedIndex;
+                var text = obj.options[index].text;
+                var value = obj.options[index].value;
+//                alert(text);
+               if(text === "All")
+                   text = "";
+                $('#table_id').DataTable().column(4).search(text).draw();
+          }
+           function searchPopulation()
+          {
+                var obj=document.getElementById("selectPopulation");
+                var index = obj.selectedIndex;
+                var text = obj.options[index].text;
+                var value = obj.options[index].value;
+//                alert(text);
+               if(text === "All")
+                   text = "";
+                $('#table_id').DataTable().column(4).search(text).draw();
+          }
+          function searchFocusArea()
+          {
+                var obj=document.getElementById("selectFocusArea");
+                var index = obj.selectedIndex;
+                var text = obj.options[index].text;
+                var value = obj.options[index].value;
+//                alert(text);
+               if(text === "All")
+                   text = "";
+                $('#table_id').DataTable().column(5).search(text).draw();
+          }
           function searchActivityType()
           {
                 var obj=document.getElementById("selectActivity");
                 var index = obj.selectedIndex;
                 var text = obj.options[index].text;
+//                alert(text);
                 var value = obj.options[index].value;
-                $('#table_id').DataTable().column(4).search(value).draw();
+//                alert(value);
+                $('#table_id').DataTable().column(5).search(value).draw();
           }
           function searchKeywords()
           {
@@ -864,6 +960,7 @@
                         $('#selectCity option[value="'+city+'"]').prop('selected', 'selected');
 
                         //Filter list of activities according to the neighborhood they are present
+//                        alert(option);
                         $('#table_id').DataTable().column(10).search(option).draw();
 
                   }

@@ -18,7 +18,23 @@ def activity_finder(request):
         for activity in activities:
             activities_array.append(activity)
         location.activities = activities_array
+        # print("location: ",location.activities)
 
     data['activitytypes']=ActivityType.objects.all()
+
+    data['communitypartners'] = CommunityPartner.objects.all()
+
+    data['populations_served'] = PopulationServed.objects.all()
+    data['focusareas'] = FocusArea.objects.all()
+    # for partner in data['communitypartners']:
+    #     partner_id = partner.idCommunityPartner
+    #     # print("partner id: "+str(partner_id))
+    #     activities = Activity.objects.filter(communitypartners=partner_id)
+    #     # print(activities)
+    #     activities_array = []
+    #     for activity in activities:
+    #         activities_array.append(activity)
+    #     partner.activities = activities_array
+        # print("partner: ", partner.activities)
 
     return render(request, 'index.html', data)
