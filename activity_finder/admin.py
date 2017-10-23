@@ -6,13 +6,10 @@ from django.db import models
 
 # Register your models here.
 #admin.site.register(Activity)
-admin.site.register(ActivityType)
+
 admin.site.register(CommunityPartner)
 admin.site.register(Course)
-admin.site.register(FocusArea)
 admin.site.register(Location)
-admin.site.register(PopulationServed)
-admin.site.register(School)
 admin.site.register(PeopleType)
 
 #header
@@ -28,6 +25,7 @@ class ActivityModelAdmin(admin.ModelAdmin):
         models.CharField: {'widget': TextInput(attrs={'size':'50'})},
         models.TextField: {'widget': Textarea(attrs={'rows':4, 'cols':100})},
     }
+
 
     search_fields = ('name',)
 
@@ -50,4 +48,40 @@ class PeopleModelAdmin(admin.ModelAdmin):
 
 
 admin.site.register(People, PeopleModelAdmin)
+
+class ActivityTypeModelAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+admin.site.register(ActivityType, ActivityTypeModelAdmin)
+
+class FocusAreaModelAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+admin.site.register(FocusArea, FocusAreaModelAdmin)
+
+class SchoolsModelAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+admin.site.register(School, SchoolsModelAdmin)
+
+class PopulationModelAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+admin.site.register(PopulationServed, PopulationModelAdmin)
+# class VersionEntryInline(admin.TabularInline):
+#     template = 'admin/edit_inline/tabular_versionentry.html'
+#     model = Activity
+#     extra = 0
+#
+#     def get_formset(self, request, obj=None, **kwargs):
+#         """
+#         Override the formset function in order to remove the add and change buttons beside the foreign key pull-down
+#         menus in the inline.
+#         """
+#         formset = super(VersionEntryInline, self).get_formset(request, obj, **kwargs)
+#         form = formset.form
+#         widget = form.base_fields['activitytype'].widget
+#         widget.can_add_related = False
+#         # formset.form.base_fields['my_field'].widget.can_add_related = False
+#         return formset
 
