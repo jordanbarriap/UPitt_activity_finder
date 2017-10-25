@@ -153,6 +153,7 @@ class School(models.Model):
 
     class Meta:
         verbose_name_plural = "Sponsoring School(s) at Pitt"
+        ordering = ['name']
 
 
 class PopulationServed(models.Model):
@@ -188,14 +189,16 @@ class CommunityPartner(models.Model):
     name = models.CharField(max_length=100)
     #address = models.CharField(max_length=200)
     #activities = models.ManyToManyField(Activity)
-    location = GeopositionField()
     website_address = models.CharField(max_length=500, blank=True, null=True)
     phone_number = models.CharField(max_length=20)
+    location = GeopositionField()
+
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name_plural = "Community Partners"
+        ordering = ['name']
 
 
 
@@ -210,11 +213,11 @@ class Activity(models.Model):
     Internship: student placement within an organization or business for the purposes of career learning.<br />
     One-time Volunteer Activity: voluntary activity – not part of a class – done by student, staff, or faculty on a one-time basis.<br />
     Ongoing Volunteer Activity: voluntary activity – not part of a class – done by student, staff, or faculty on a one-time basis.<br />
-    Public Seminar/Workshop (revise to read, “Public Event/Workshop”): event or workshop open to the public.<br />
+    Public Event/Workshop: event or workshop open to the public.<br />
     Consulting/Coaching.<br />
     Evaluation: measuring the impact or outcomes of a community-based program.<br />""")
     description = models.TextField(max_length=2000)
-    estimated_start_date = models.DateField(default=date.today, help_text='(yyyy-mm-dd)')
+    estimated_start_date = models.DateField(default=date.today, help_text='(yyyy-mm-dd)<br />For data entry purposes, please provide a complete estimated start date including a day, month, and year, even if the day and month are unknown.')
     estimated_end_date = models.DateField(blank=True, null=True, help_text='(yyyy-mm-dd). Leave blank if currently ongoing.')
     webpage_associated_with_activity = models.CharField(max_length=500, blank=True, null=True)
     outcomes = models.TextField(max_length=2000, blank=True, null=True, help_text='Please include a description of any products, programs, or outputs this activity has generated. This information will not be publicly viewable.')
