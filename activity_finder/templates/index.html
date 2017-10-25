@@ -160,7 +160,7 @@
     </div>
     <div id="content-div">
         <div id="acts-table">
-            <div class="instruction">To learn more about each of the activities below, click on the name of the activity. If you want to go back to see an overview of all the activities, just click anywhere on the map.</div>
+            <div class="instruction"><p id="instruction-text">To learn more about each of the activities below, click on the name of the activity. If you want to go back to see an overview of all the activities, just click anywhere on the map or on the button "Reset map ⟲"</p><button id="reset-map-btn" class="btn btn-sm btn-warning">Reset map ⟲</button></div>
             <div id="acts-table-1"> <!-- class="col-md-3">-->
                 <table id="table_id" class="display">
                     <thead>
@@ -332,8 +332,7 @@
                  }else{
                     description.slideUp(100);
                     $(this).removeClass("active");
-                    notHighlightMarkers();
-
+                    highlightFilteredActivities(false);
                  }
 
           });
@@ -454,6 +453,10 @@
                         }
                     });
 
+                    $("#reset-map-btn").click(function(){
+                        resetMap();
+                    });
+
               }
           );
           /*var nameFlag=false;
@@ -518,9 +521,15 @@
                 var text = obj.options[index].text;
                 var value = obj.options[index].value;
 //                alert(text);
-               if(text === "All")
+               if(text === "All") {
                    text = "";
-                $('#table_id').DataTable().column(4).search(text).draw();
+                   $('#table_id').DataTable().column(4).search(text).draw();
+                   highlightFilteredActivities(false);
+               }else{
+                   $('#table_id').DataTable().column(4).search(text).draw();
+                   highlightFilteredActivities(true);
+               }
+
           }
           function searchFocusArea()
           {
@@ -529,9 +538,17 @@
                 var text = obj.options[index].text;
                 var value = obj.options[index].value;
 //                alert(text);
-               if(text === "All")
+               if(text === "All") {
                    text = "";
-                $('#table_id').DataTable().column(5).search(text).draw();
+                   $('#table_id').DataTable().column(5).search(text).draw();
+                   highlightFilteredActivities(false);
+               }else{
+                   $('#table_id').DataTable().column(5).search(text).draw();
+                   highlightFilteredActivities(true);
+               }
+
+
+
           }
           function searchActivityType()
           {
@@ -1045,7 +1062,7 @@
 
         google.maps.event.addListener(map, 'click', function(event){
             if(marker_clicked){
-                notHighlightMarkers();
+                unhighlightAllMarkers();
                 $('#table_id').DataTable().column(11).search("").draw();
                 marker_clicked=false;
                 id_clicked_marker="";
@@ -1061,11 +1078,32 @@
 
     };
 
-    function notHighlightMarkers(){
+    function unhighlightAllMarkers(){
         for (var i=0;i<markers_array.length;i++){
             if(markers_array[i]){
                 markers_array[i].setAnimation(null);
-                markers_array[i].setOpacity(1.0);
+                //markers_array[i].setOpacity(1.0);
+                markers_array[i].setVisible(true);
+            }
+        }
+    }
+
+    function hideAllMarkers(){
+        for (var i=0;i<markers_array.length;i++){
+            if(markers_array[i]){
+                markers_array[i].setAnimation(null);
+                //markers_array[i].setOpacity(1.0);
+                markers_array[i].setVisible(false);
+            }
+        }
+    }
+
+    function highlightAllMarkers(){
+        for (var i=0;i<markers_array.length;i++){
+            if(markers_array[i]){
+                markers_array[i].setAnimation(null);
+                //markers_array[i].setOpacity(1.0);
+                markers_array[i].setVisible(true);
             }
         }
     }
@@ -1081,11 +1119,13 @@
         for (var i=0;i<markers_array.length;i++){
             if(markers_array[i]){
                 if(markers_ids_array.indexOf(String(i))!=-1){
-                    markers_array[i].setOpacity(1.0);
-                    markers_array[i].setAnimation(google.maps.Animation.BOUNCE);
+                    //markers_array[i].setOpacity(1.0);
+                    markers_array[i].setVisible(true);
+                    //markers_array[i].setAnimation(google.maps.Animation.BOUNCE);
                 }else{
                     markers_array[i].setAnimation(null);
-                    markers_array[i].setOpacity(0.3);
+                    //markers_array[i].setOpacity(0);
+                    markers_array[i].setVisible(false);
                 }
             }
         }
@@ -1103,6 +1143,55 @@
                 }
             }
         }*/
+    }
+
+    function highlightFilteredActivities(focus){
+         var markers_ids_str="";
+         if($(".dataTables_empty").length==0){
+             $(".item").each(function(d){
+                var act_locations = $(this).find("input[name='locations']").val();
+                markers_ids_str = markers_ids_str + act_locations;
+             })
+             markers_ids_str = markers_ids_str.substring(0,markers_ids_str.length-1);
+             var markers_ids = markers_ids_str.split(";");
+             console.log(markers_ids);
+             if(markers_ids.length>0){
+                 if(focus){
+                     var bounds = new google.maps.LatLngBounds();
+                     for (var i = 0; i < markers_ids.length; i++) {
+                        bounds.extend(markers_array[markers_ids[i]].getPosition());
+                     }
+
+                     google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
+                        //this.setZoom(map.getZoom()-1);
+                        if (this.getZoom() > 10) {
+                            this.setZoom(10);
+                        }
+                     });
+                     map.fitBounds(bounds);
+                 }
+                 highlightMarkers(markers_ids);
+            }
+         }else{
+             hideAllMarkers();
+         }
+    }
+
+
+    function resetMap(){
+        $('#table_id').DataTable().column(11).search("").draw();
+        if($(".active")){
+            $(".active").click();
+        }
+        marker_clicked=false;
+        id_clicked_marker="";
+        //map.setZoom(13);
+        //map.setCenter(google.maps.LatLng(40.444269,-79.953260));
+
+
+        $("#selectFocusArea").val("").change();
+        $("#selectPopulation").val("").change();
+        unhighlightAllMarkers();
     }
 
     function makeInfoWindowEvent(map, info_window, content_string, activities_ids, marker) {
@@ -1130,7 +1219,7 @@
                 }
             }
             $('#table_id').DataTable().column(11).search("").draw();
-            notHighlightMarkers();
+            unhighlightAllMarkers();
             marker_clicked = false;
             id_clicked_marker = "";
 
