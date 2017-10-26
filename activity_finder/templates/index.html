@@ -113,11 +113,18 @@
                         <!--<option value="">All</option>-->
                     <!--</select>-->
                 <!--</div>-->
-                <img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />
-                <div class="location-filter">
+                <!--<img class="arrow-icon" src="{% static "/image/arrow-right.png" %}" />-->
+                <div class="filter">
                     Location:<br>
-                    <select id="selectNeighborhood" class="form-control form-control-sm"  onchange="searchNeighborhood(this.value)">
+                    <!--<select id="selectNeighborhood" class="form-control form-control-sm"  onchange="searchNeighborhood(this.value)">-->
+                    <select id="selectLocation" class="form-control form-control-sm" onchange="searchLocation()">
                         <option value="">All</option>
+                        <option value="Homewood">Homewood</option>
+                        <option value="Hill District">Hill District</option>
+                        <option value="Pittsburgh">Pittsburgh</option>
+                        <option value="Allegheny County">Allegheny County</option>
+                        <option value="Southwestern PA">Southwestern PA</option>
+                        <option value="Pennsylvania">Pennsylvania</option>
                     </select>
                 </div>
             </div>
@@ -126,9 +133,7 @@
                 <select id="selectFocusArea" class="form-control form-control-sm" onchange="searchFocusArea()">
                     <option value="">All</option>
                     {% for area in focusareas %}
-                    <!--<div class="item">-->
                         <option value={{ area.name }}>{{ area.name }}</option>
-                    <!--</div>-->
                     {% endfor %}
                 </select>
             </div>
@@ -137,9 +142,7 @@
                 <select id="selectPopulation" class="form-control form-control-sm" onchange="searchPopulation()">
                     <option value="">All</option>
                     {% for population in populations_served %}
-                    <!--<div class="item">-->
                         <option value={{ population.name }}>{{ population.name }}</option>
-                    <!--</div>-->
                     {% endfor %}
                 </select>
             </div>
@@ -269,6 +272,11 @@
                         <td>
                             {{act.idActivity}}
                         </td>
+                        <td>
+                            {% for location in act.locations.all %}
+                            {{ location.region }} {% if not forloop.last %};{% endif %}
+                            {% endfor %}
+                        </td>
 
                     </tr>
                     {% endfor %}
@@ -358,12 +366,13 @@
                             { "visible": false },//counties
                             { "visible": false },//cities
                             { "visible": false },//neighborhoods
-                            { "visible": false}//activity id
+                            { "visible": false },//activity id
+                            { "visible": false }//region (Southwest PA or not)
                          ],
                     });
                     {% for act in activities %}
                         {% for location in act.locations.all %}
-                            if (states_array.indexOf("{{location.state}}")==-1){
+                            /*if (states_array.indexOf("{{location.state}}")==-1){
                                 states_array.push("{{location.state}}");
                                 $("#selectState").append('<option value="{{location.state}}">{{location.state}}</option>');
                                 states_data_array["{{location.state}}"]={counties:[]};
@@ -406,7 +415,7 @@
                                 }else{
                                     cities_data_array["{{location.city}}"].neighborhoods.push("{{location.neighborhood}}");
                                 }
-                            }
+                            }*/
                         {% endfor %}
                     {% endfor %}
                     //console.log(states_data_array);
@@ -501,8 +510,65 @@
                 var index = obj.selectedIndex;
                 var text = obj.options[index].text;
                 var value = obj.options[index].value;
-                $('#table_id').DataTable().column(3).search(value).draw();
+                var column;
+                //Clear others filters in case they were applied before
+                $('#table_id').DataTable().column(12).search("").draw();
+                $('#table_id').DataTable().column(10).search("").draw();
+                $('#table_id').DataTable().column(9).search("").draw();
+                $('#table_id').DataTable().column(8).search("").draw();
+                $('#table_id').DataTable().column(7).search("").draw();
+                if(text==="Homewood") {
+                    //text= '^"Homewood North"$|^"Homewood South"$|^"Homewood West"$';
+                    column = 10;
+                }
+                if(text==="Hill District"){
+                    text = '^Upper Hill$|^Lower Hill$|^Bedford Dwellings$|^Middle Hill$';
+                    //text = 'Hill';
+                    column = 10;
+                }
+                if(text==="Pittsburgh"){
+                    column = 9;
+                }
+                if(text==="Allegheny County"){
+                    text="Allegheny";
+                    column = 8;
+                }
+                if(text==="Pennsylvania"){
+                    column = 7;
+                }
+                if(text==="Southwestern PA"){
+                    text="Southwest PA";
+                    column = 12;
+                }
+                if(text==="All"){
+                    text="";
+                    column = 9;
+                }
+                $('#table_id').DataTable().columns(column).search(text,true,false).draw();
+                if(text === "") {
+                   highlightFilteredActivities(false);
+               }else{
+
+                    if(text==="Homewood"){
+                        highlightFilteredActivities(false);
+                        var position = new google.maps.LatLng(40.45742974,-79.8978138);
+                        map.setCenter(position);
+                        map.setZoom(15);
+                    }else{
+                     if(text==='^Upper Hill$|^Lower Hill$|^Bedford Dwellings$|^Middle Hill$'){
+                            highlightFilteredActivities(false);
+                            var position = new google.maps.LatLng(40.4449875,-79.97351646);
+                            map.setCenter(position);
+                            map.setZoom(15);
+                         }else{
+                             highlightFilteredActivities(true);
+                         }
+                    }
+
+               }
+
           }
+
            function searchPartner()
           {
                 var obj=document.getElementById("selectPartner");
@@ -537,7 +603,6 @@
                 var index = obj.selectedIndex;
                 var text = obj.options[index].text;
                 var value = obj.options[index].value;
-//                alert(text);
                if(text === "All") {
                    text = "";
                    $('#table_id').DataTable().column(5).search(text).draw();
@@ -1188,7 +1253,7 @@
         //map.setZoom(13);
         //map.setCenter(google.maps.LatLng(40.444269,-79.953260));
 
-
+        $("#selectLocation").val("").change();
         $("#selectFocusArea").val("").change();
         $("#selectPopulation").val("").change();
         unhighlightAllMarkers();
