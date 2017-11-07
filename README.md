@@ -20,8 +20,8 @@ Setup of Django environment
 	- $python manage.py makemigrations
 	- $python manage.py migrate
 9. Check if server runs\
-   	$python manage.py runserver 127.0.0.1:8000 (on local machine)
-	$python manage.py runserver 127.0.0.1:8000 (on server)
+   	$python manage.py runserver 127.0.0.1:8000 (on local machine)\
+	$python manage.py runserver 0.0.0.1:8000 (on server)
 10. Create super user for administration login\
 	$python manage.py createsuperuser
 11. Install django-geoposition
