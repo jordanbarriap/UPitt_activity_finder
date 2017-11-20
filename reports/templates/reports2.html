@@ -47,7 +47,7 @@
     <select id="entities-cb">
         <option disabled selected value> -- Select a value -- </option>
         {% for entity in entities %}
-            {% if entity != "Activity"%}
+            {% if entity != "Activity" and entity != "PeopleType"%}
             <option value="{{ entity }}">{{ entity }}</option>
             {% endif %}
         {% endfor %}
@@ -157,7 +157,10 @@
         $("#filter"+current_filter).append("<option disabled selected value> -- Select a value -- </option>");
 
         for(var i=0; i<filters.length; i++){
-            $("#filter"+current_filter).append("<option value='"+filters[i]+"'>"+filters[i]+"</option>");
+            if (filters[i] != "Activity" && filters[i] != "PeopleType")
+            {
+                $("#filter" + current_filter).append("<option value='" + filters[i] + "'>" + filters[i] + "</option>");
+            }
         }
 
         $("#filter"+current_filter).change(function(){

@@ -84,7 +84,7 @@
         doc.text("Activity name:\r\n",20, y);
         y = y +10
         doc.setFontType("regular");
-        doc.text('{{original.name}}',30,y);
+        doc.text('{{original.name}}'.replace("&amp;","&"),30,y);
         y= y+10
 
         doc.setFontType("bold");
@@ -98,7 +98,7 @@
         doc.text("Description:\r\n",20, y);
         y = y +10
         doc.setFontType("regular");
-        var splitname = doc.splitTextToSize('{{original.description}}', 160);
+        var splitname = doc.splitTextToSize('{{original.description}}'.replace("&#39;","'"), 160);
         //loop thru each line and output while increasing the vertical space
         for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
              doc.text(30, y, splitname[c]);
@@ -113,25 +113,6 @@
             doc.setFont("times");
         }
 
-        doc.setFontType("bold");
-        doc.text("Happening: ",20, y);
-        y = y +10
-        if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
-        doc.setFontType("regular");
-        if('{{original.happening}}' == "False")
-            doc.text("no",30, y);
-        else
-            doc.text("yes",30, y);
-        y = y +10
-        if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
 
         doc.setFontType("bold");
         doc.text("Start date:\r\n",20, y);
@@ -142,7 +123,7 @@
                 y = 20;
              }
         doc.setFontType("regular");
-        doc.text('{{original.start_date}}',30,y);
+        doc.text('{{original.estimated_start_date}}',30,y);
         y= y+10
         if(y >= 290){
                 breakPage(doc, y, pageNumber);
@@ -159,7 +140,7 @@
                 y = 20;
              }
         doc.setFontType("regular");
-        doc.text('{{original.end_date}}',30,y);
+        doc.text('{{original.estimated_end_date}}',30,y);
         y= y+10
         if(y >= 290){
                 breakPage(doc, y, pageNumber);
@@ -197,25 +178,12 @@
                 y = 20;
              }
         doc.setFontType("regular");
-        doc.text('{{original.funding}}',30,y);
-        y= y+10
-        if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
-
-        doc.setFontType("bold");
-        doc.text("Unit notes:\r\n",20, y);
-        y = y +10
-        if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
-        doc.setFontType("regular");
-        doc.text('{{original.unitNotes}}',30,y);
-        y= y+10
+        var splitname = doc.splitTextToSize('{{original.funding}}', 160);
+        //loop thru each line and output while increasing the vertical space
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
+             doc.text(30, y, splitname[c]);
+             y = y + 10;
+        }
         if(y >= 290){
                 breakPage(doc, y, pageNumber);
                 pageNumber++;
@@ -253,7 +221,7 @@
             if(str != "")
                 str = str+ "; ";
             str=str + '{{p}}';
-            splitname = doc.splitTextToSize(str, 160);
+            splitname = doc.splitTextToSize(str.replace("&#39;","'"), 160);
         {% endfor %}
         //loop thru each line and output while increasing the vertical space
         for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
@@ -340,42 +308,14 @@
         {% endfor %}
         splitname = doc.splitTextToSize(str, 160);
         //loop thru each line and output while increasing the vertical space
-        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
-             doc.text(30, y, splitname[c]);
-             y = y + 10;
-             if(y >= 290){
+        for(var c = 0, stlength = splitname.length ; c < stlength ; c++) {
+            doc.text(30, y, splitname[c]);
+            y = y + 10;
+            if (y >= 290) {
                 breakPage(doc, y, pageNumber);
                 pageNumber++;
                 y = 20;
-             }
-        }
-
-        doc.setFontType("bold");
-        doc.text("Units:\r\n",20, y);
-        y = y +10
-        if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
-        doc.setFontType("regular");
-        str = "";
-        {% for p in original.units.all %}
-            if(str != "")
-                str = str+ "; ";
-            str=str + '{{p}}';
-            str = str.replace("amp;","");
-        {% endfor %}
-        splitname = doc.splitTextToSize(str, 160);
-        //loop thru each line and output while increasing the vertical space
-        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
-             doc.text(30, y, splitname[c]);
-             y = y + 10;
-             if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
+            }
         }
 
         doc.setFontType("bold");
@@ -388,7 +328,7 @@
              }
         doc.setFontType("regular");
         str = "";
-        {% for p in original.populations.all %}
+        {% for p in original.populations_served.all %}
             if(str != "")
                 str = str+ "; ";
             str=str + '{{p}}';
@@ -406,33 +346,6 @@
              }
         }
 
-        doc.setFontType("bold");
-        doc.text("Served neighbourhoods:\r\n",20, y);
-        y = y +10
-        if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
-        doc.setFontType("regular");
-        str = "";
-        {% for p in original.servedneighbourhoods.all %}
-            if(str != "")
-                str = str+ "; ";
-            str=str + '{{p}}';
-            str = str.replace("amp;","");
-        {% endfor %}
-        splitname = doc.splitTextToSize(str, 160);
-        //loop thru each line and output while increasing the vertical space
-        for(var c = 0, stlength = splitname.length ; c < stlength ; c++){
-             doc.text(30, y, splitname[c]);
-             y = y + 10;
-             if(y >= 290){
-                breakPage(doc, y, pageNumber);
-                pageNumber++;
-                y = 20;
-             }
-        }
 
         doc.setFontType("bold");
         doc.text("Courses:\r\n",20, y);

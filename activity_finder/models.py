@@ -200,6 +200,14 @@ class CommunityPartner(models.Model):
         verbose_name_plural = "Community Partners"
         ordering = ['name']
 
+    # def save(self, *args, **kwargs):
+    #
+    #     geolocator = GoogleV3(api_key="AIzaSyCPqXhtFS9Fu0-sCptEPyrl7nknrVGQD2g")
+    #     self.location = geolocator.reverse(str(self.position.latitude)+","+str(self.position.longitude))
+    #
+    #     super(CommunityPartner,self).save(*args, **kwargs)  # Call the "real" save() method.
+    # #    do_something_else()
+
 
 
 DATE_INPUT_FORMATS = ('%d-%m-%Y','%Y-%m-%d')

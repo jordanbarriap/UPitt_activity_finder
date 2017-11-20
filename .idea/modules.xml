@@ -3,6 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/UPitt_activity_finder.iml" filepath="$PROJECT_DIR$/.idea/UPitt_activity_finder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../pycharm/contour3D/.idea/contour3D.iml" filepath="$PROJECT_DIR$/../../../pycharm/contour3D/.idea/contour3D.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../cs1-comparison/.idea/cs1-comparison.iml" filepath="$PROJECT_DIR$/../../cs1-comparison/.idea/cs1-comparison.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../eclipse-luna/ConceptExtraction/data/.idea/data.iml" filepath="$PROJECT_DIR$/../../../eclipse-luna/ConceptExtraction/data/.idea/data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../pycharm/data-science-with-pandas/.idea/data-science-with-pandas.iml" filepath="$PROJECT_DIR$/../../../pycharm/data-science-with-pandas/.idea/data-science-with-pandas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../pycharm/matplot/.idea/matplot.iml" filepath="$PROJECT_DIR$/../../../pycharm/matplot/.idea/matplot.iml" />
     </modules>
   </component>
 </project>

@@ -23,7 +23,7 @@ def reports(request):
     for entity in entities:
         entities_list.append(entity.__name__)
     db.connections.close_all()
-    return render(request, 'reports1.html', {'entities':entities_list})
+    return render(request, 'reports2.html', {'entities':entities_list})
 
 @login_required
 def get_filters(request):
@@ -192,7 +192,7 @@ def get_table1(request):
     return JsonResponse(data)
 
 @login_required
-#for applying the filter
+#for applying the filter which includes "outcome" and "details"
 def get_table(request):
     entity = request.GET.get('entity', None)
     outcome = request.GET.get('outcome',None)
@@ -219,6 +219,8 @@ def get_table(request):
 
     querysets.append(entity_model.objects.all())
 
+    # print("\nCheck fields")
+    # print(entity_model._meta.get_fields())
     ent1_fields = []
     for field in entity_model._meta.get_fields():
         if type(field).__name__ != "AutoField":
@@ -239,11 +241,15 @@ def get_table(request):
                             else:
                                 ent1_fields.append(field.name + "__name")
             else:
-                if field.name!="position":
-                    ent1_fields.append(field.name)
+                if entity_model.__name__ == 'CommunityPartner':
+                    if field.name != "location":
+                        ent1_fields.append(field.name)
+                else:
+                    if field.name!="position":
+                        ent1_fields.append(field.name)
 
     print("\nCheck query")
-    print(ent1_fields)
+    # print(ent1_fields)
     idx = len(ent1_fields) #use to count how many columns from this model
     columns = ent1_fields
 
@@ -251,18 +257,16 @@ def get_table(request):
     # data_filters.append("#select_filter")
 
     queryset_values.append(entity_model.objects.all().values_list(*ent1_fields))#[entry for entry in queryset1]
-    # print("\nCheck second", queryset_values[0])
-    print("\n I am here")
     for ent1 in querysets[0]:
-        #querysets.append(ent1.activity_set.all())
         fields=['name']
+        # fields=['people_id__idPeople']
         if outcome=="true":
             fields.append("outcomes")
         if details=="true":
             if entity_model.__name__!="ActivityType":
                 fields.append("activitytype__name")
             fields.append("description")
-            fields.append("happening")
+            # fields.append("happening")
             fields.append("people_id__first_name")
             fields.append("people_id__last_name")
             fields.append("people_id__email")
@@ -270,36 +274,22 @@ def get_table(request):
             if entity_model.__name__ != "School":
                 fields.append("schools")
                 fields.append("schools__name")
-            if entity_model.__name__ != "Unit":
-                fields.append("units")
-                fields.append("units__name")
+
             if entity_model.__name__ != "CommunityPartner":
                 fields.append("communitypartners")
                 fields.append("communitypartners__name")
 
-        # print("#CHECKING fields")
-        print(fields)
+        # print("#CHECKING entity")
+        # print(ent1)
         final_query_values=ent1.activity_set.all().values_list(*fields)
-        # print("\nFinal query values:")
-        # print(final_query_values)
         for result in final_query_values:
-            # print(result)
-            # print("******")
-            # print(queryset_values[0][ent1_count])
             rows.append(copy.copy(queryset_values[0][ent1_count]))
-            # print(rows[row])
-            # print(result[result])
             rows[row] = rows[row] + result
-            # for field in result:
-            #     rows[row]= rows[row] + result[field]
-            # print(rows)
             row = row + 1
-        # print("#######")
         ent1_count = ent1_count + 1
-        #ent1_values = queryset_values[1][ent1_count]
 
     query_values = [entry for entry in rows]
-    print("\nCheck final data\n",query_values)
+    # print("\nCheck final data\n",query_values)
 
 
     # print("\nAfter aggregate")
@@ -312,9 +302,7 @@ def get_table(request):
         if entity_model.__name__!="ActivityType":
             columns.append("activity_type")
             idx = idx +1
-
         columns.append("description")
-        columns.append("happening")
         columns.append("contact_first_name")
         columns.append("contact_last_name")
         columns.append("contact_email")
@@ -324,27 +312,24 @@ def get_table(request):
 
         if entity_model.__name__ != "School":
             columns.append("schools")
-        if entity_model.__name__ != "Unit":
-            columns.append("units")
         if entity_model.__name__ != "CommunityPartner":
-            columns.append("community_partner")
-        if entity_model.__name__ in ["School", "Unit", "CommunityPartner"]:
-            print("\nCheck unit area")
-            query_values = AggregateFocusArea(query_values, idx + 8)
-            query_values = AggregateFocusArea(query_values, idx+6)
-        else:
-            query_values = AggregateFocusArea(query_values, idx + 10)
-            print("\nCheck unit area")
-            query_values = AggregateFocusArea(query_values, idx + 8)
-            print("\nCheck school")
-            query_values = AggregateFocusArea(query_values, idx + 6)
+            columns.append("communitypartners")
+        if entity_model.__name__ in ["School", "CommunityPartner"]:
 
-        # columns.append("Focus_area_name")
+            query_values = AggregateField(query_values, idx+5)
+        else:
+            # aggregate both school and community partners
+            # idx + 7: for community partners
+            query_values = AggregateField(query_values, idx + 7)
+            # idx + 5: for schools
+            query_values = AggregateField(query_values, idx + 5)
+
     # columns = fields
+    if entity_model.__name__ == "ActivityType":
+        columns[0] = 'activity_type'
     for column in columns:
         data_types.append(type(column).__name__)
         data_filters.append("#select_filter")
-    print(data_types)
 
     for value in query_values:
         json_value = {'id': row, 'data': value}
@@ -353,8 +338,8 @@ def get_table(request):
 
     json_data_no_repeated = [i for n, i in enumerate(json_data) if i not in json_data[n + 1:]]#delete possible duplicated rows in the query
 
-    print("CHECKING FILTER")
-    print(data_filters)
+    # print("CHECKING FILTER")
+    # print(data_filters)
 
     data = {
         'columns':columns,
@@ -365,34 +350,37 @@ def get_table(request):
     db.connections.close_all()
     return JsonResponse(data)
 
-def AggregateFocusArea(data, idx):
+def AggregateField(data, idx):
     flag = False
     results = []
     t = ()
-    focusArea = ""
-    print(len(data))
+    Field = ""
     for i in range(len(data)):
         if flag == False:
             t = data[i][:idx]
-            focusArea = data[i][idx+1] +"; "
+            # print(idx)
+            # print(data[i])
+            Field = data[i][idx+1] +"; "
             flag = True
+            print("testin inside if")
         else:
-            if data[i][0]==data[i-1][0]:
-                if data[i][idx] > data[i-1][idx]:
-                    # print(t)
-                    focusArea = focusArea + data[i][idx+1] +"; "
+            # print(data[i][0], data[i-1][0])
+            if data[i][0]==data[i-1][0]: #if they have the same activity type
+                if data[i][idx] > data[i-1][idx]: #if the field id of the current activity larger then the previous one, it means they have the same field
+
+                    Field = Field + data[i][idx+1] +"; "
                 else:
-                    t = t + (focusArea,) + data[i][idx+2:]
+                    t = t + (Field,) + data[i][idx+2:]
                     results.append(t)
                     t = data[i][:idx]
-                    focusArea = data[i][idx+1] + "; "
+                    Field = data[i][idx+1] + "; "
             else:
-                t = t + (focusArea,) + data[i-1][idx + 2:]
+                t = t + (Field,) + data[i-1][idx + 2:]
                 results.append(t)
                 t = data[i][:idx]
-                focusArea = data[i][idx+1] + "; "
+                Field = data[i][idx+1] + "; "
                 # flag = False
-    t = t + (focusArea,) + data[len(data)-1][idx + 2:]
+    t = t + (Field,) + data[len(data)-1][idx + 2:]
     results.append(t)
     # print(results)
     db.connections.close_all()
@@ -512,6 +500,8 @@ def get_subtable(request):
         if(entity == "ActivityType"):
             flag_activity_type = "true"
             #print("HHHHHHHHHHHHHHH")
+        # if entity =="PopulationServed":
+        #     entity = "populations_served"
         entities.append(entity)
     #entity1 = request.GET.get('entity1', None)
     #entity2 = request.GET.get('entity2', None)
@@ -542,8 +532,8 @@ def get_subtable(request):
         rel_type_entities.append("n")
     #Check if entity1 is foreignkey or manytomany field in the table Activity
     act_fields = [field for field in Activity._meta.get_fields()]
-    print("\nCheck act_fields\n")
-    print(act_fields)
+    # print("\nCheck act_fields\n")
+    # print(act_fields)
     for act_field in act_fields:
         #print(act_field)
         if act_field.is_relation:
@@ -566,18 +556,7 @@ def get_subtable(request):
     #print("\nModel: ", entity_models[0])
 
     querysets.append(entity_models[0].objects.all())
-    # if entity_models[0].__name__!= "ActivityType":
-    #     querysets.append(entity_models[0].objects.all())#objects.all().prefetch_related('activity_set')
-    # else:
-    #     querysets.append(entity_models[0].objects.values('name'))
 
-    # print("\nCheck model 1: ")
-    # print(querysets)
-    # print("Pass")
-
-    #ent1_fields = [field for field in entity_models[0]._meta.get_fields() if type(field).__name__!="AutoField"]
-    #print(ent1_fields)
-    #print("@@@@@@@@@-----@@@@@@@@@@")
 
     ent1_fields = []
     for field in entity_models[0]._meta.get_fields():
@@ -599,18 +578,19 @@ def get_subtable(request):
                             else:
                                 ent1_fields.append(field.name + "__name")
             else:
-                if field.name != "position":
-                    ent1_fields.append(field.name)
+                if entity_model.__name__ == 'CommunityPartner':
+                    if field.name != "location":
+                        ent1_fields.append(field.name)
+                else:
+                    if field.name!="position":
+                        ent1_fields.append(field.name)
 
-    print("\nCheck query")
-    print(ent1_fields)
+    # print("\nCheck query")
+    # print(ent1_fields)
     columns = ent1_fields
     idx = len(columns)
-    # data_types.append(type(ent1_fields).__name__)
-    # data_filters.append("#select_filter")
 
     queryset_values.append(entity_models[0].objects.all().values_list(*ent1_fields))#[entry for entry in queryset1]
-    # print("\nCheck second", queryset_values[0])
 
     check_first_iteration = True
     if rel_type_entities[0] != 'n':
@@ -620,7 +600,10 @@ def get_subtable(request):
             for i in range (1,num_entities):
                 if(rel_type_entities[i]=="m"):
                     if entity_models[i].__name__!="People":
-                       fields.append(entities[i].lower()+"s__name")
+                        if entity_models[i].__name__!="People":
+                            fields.append("populations_served__name")
+                        else:
+                            fields.append(entities[i].lower() + "s__name")
                     else:
                         fields.append("universityleaders__first_name")
                         fields.append("universityleaders__last_name")
@@ -633,51 +616,34 @@ def get_subtable(request):
                 check_first_iteration = False
 
             fields.append("name")
+
             if outcome == "true":
                 fields.append("outcomes")
             if details == "true":
                 if flag_activity_type != "true":
                     fields.append("activitytype__name")
                 fields.append("description")
-                fields.append("happening")
                 fields.append("people_id__first_name")
                 fields.append("people_id__last_name")
                 fields.append("people_id__email")
                 if "School" not in entities:
                     fields.append("schools")
                     fields.append("schools__name")
-                if entity_model.__name__ != "Unit":
-                    fields.append("units")
-                    fields.append("units__name")
                 if entity_model.__name__ != "CommunityPartner":
                     fields.append("communitypartners")
                     fields.append("communitypartners__name")
 
-            # print("#CHECKING ENTITY")
-            # print(ent1)
             final_query_values=ent1.activity_set.all().values_list(*fields)
-            # print("\nFinal query values:")
-            # print(final_query_values)
-
 
             for result in final_query_values:
-                # print(result)
-                # print("******")
-                # print(queryset_values[0][ent1_count])
                 rows.append(copy.copy(queryset_values[0][ent1_count]))
-                # print(rows[row])
-                # print(result[result])
                 rows[row] = rows[row] + result
-                # for field in result:
-                #     rows[row]= rows[row] + result[field]
-                # print(rows)
                 row = row + 1
-            # print("#######")
             ent1_count = ent1_count + 1
             #ent1_values = queryset_values[1][ent1_count]
 
     query_values = [entry for entry in rows]
-    print("\nCheck final data\n",query_values)
+    # print("\nCheck final data\n",query_values)
 
     # print("#checking fields")
     # print(fields)
@@ -685,7 +651,7 @@ def get_subtable(request):
     columns = columns + fields
     columns[idx] = 'activity_name'
     columns = columns[:idx+1]
-    print("\ncolumns ", columns)
+    # print("\ncolumns ", columns)
 
     if outcome == "true":
         columns.append("outcomes")
@@ -696,7 +662,6 @@ def get_subtable(request):
             idx = idx +1
 
         columns.append("description")
-        columns.append("happening")
         columns.append("contact_first_name")
         columns.append("contact_last_name")
         columns.append("contact_email")
@@ -706,75 +671,34 @@ def get_subtable(request):
 
         if "School" not in entities:
             columns.append("schools")
-        if "Unit" not in entities:
-            columns.append("units")
         if "CommunityPartner" not in entities:
             columns.append("community_partner")
-        print("\nIndex",idx)
-        # query_values = AggregateFocusArea(query_values, idx + 6)
         if "School" not in entities:
-            if "Unit" not in entities:
-                if "CommunityPartner" not in entities:
-                    query_values = AggregateFocusArea(query_values, idx + 10)
-                    query_values = AggregateFocusArea(query_values, idx + 8)
-                    query_values = AggregateFocusArea(query_values, idx + 6)
-                else:
-                    query_values = AggregateFocusArea(query_values, idx + 8)
-                    query_values = AggregateFocusArea(query_values, idx + 6)
+            if "CommunityPartner" not in entities:
+                query_values = AggregateField(query_values, idx + 7)
+                query_values = AggregateField(query_values, idx + 5)
             else:
-                if "CommunityPartner" not in entities:
-                    query_values = AggregateFocusArea(query_values, idx + 8)
-                    query_values = AggregateFocusArea(query_values, idx + 6)
-                else:
-                    query_values = AggregateFocusArea(query_values, idx + 6)
+                query_values = AggregateField(query_values, idx + 5)
         else:
-            if "Unit" not in entities:
-                if "CommunityPartner" not in entities:
-                    query_values = AggregateFocusArea(query_values, idx + 8)
-                    query_values = AggregateFocusArea(query_values, idx + 6)
-                else:
-                    query_values = AggregateFocusArea(query_values, idx + 6)
-            else:
-                if "CommunityPartner" not in entities:
-                    query_values = AggregateFocusArea(query_values, idx + 6)
-
-        # if entity_model.__name__ in ["School", "Unit", "CommunityPartner"]:
-        #     print("\nCheck unit area")
-        #     query_values = AggregateFocusArea(query_values, idx + 8)
-        #     query_values = AggregateFocusArea(query_values, idx+6)
-        # else:
-        #     query_values = AggregateFocusArea(query_values, idx + 10)
-        #     query_values = AggregateFocusArea(query_values, idx + 8)
-        #     query_values = AggregateFocusArea(query_values, idx + 6)
+            if "CommunityPartner" not in entities:
+                query_values = AggregateField(query_values, idx + 5)
 
     # print(columns)
     # columns = fields
     for column in columns:
         data_types.append(type(column).__name__)
         data_filters.append("#select_filter")
-    print(data_types)
+    # print(data_types)
 
     for value in query_values:
         json_value = {'id': row, 'data': value}
         json_data.append(json_value)
         row = row + 1
-    #
-    # for value in query_values:
-    #     if len(columns)==0:
-    #         columns = list(value.keys())
-    #         for column in columns:
-    #             data_types.append(type(column).__name__)
-    #             data_filters.append("#select_filter")
-    #         print(data_types)
-    #     json_value={'id':row, 'data':value}
-    #
-    #     json_data.append(json_value)
-    #     row = row + 1
 
     json_data_no_repeated = [i for n, i in enumerate(json_data) if i not in json_data[n + 1:]]#delete possible duplicated rows in the query
 
-    print("CHECKING FILTER")
-    print(data_filters)
+    # print("CHECKING FILTER")
+    # print(data_filters)
 
     data = {
         'columns':columns,
