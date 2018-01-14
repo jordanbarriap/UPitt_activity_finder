@@ -8,7 +8,6 @@
     <orderEntry type="module" module-name="contour3D" />
     <orderEntry type="module" module-name="matplot" />
     <orderEntry type="module" module-name="data" />
-    <orderEntry type="module" module-name="data-science-with-pandas" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />

@@ -249,7 +249,7 @@ def get_table(request):
                         ent1_fields.append(field.name)
 
     print("\nCheck query")
-    # print(ent1_fields)
+    print(ent1_fields)
     idx = len(ent1_fields) #use to count how many columns from this model
     columns = ent1_fields
 
@@ -484,8 +484,10 @@ def get_subfilters(request):
     #}
     return JsonResponse(data)
 
+####################################################################################################################
+####################################################################################################################
 @login_required
-#for applying the filter
+#for applying sub-filters (i.e., more than 1 table
 def get_subtable(request):
     outcome = request.GET.get('outcome', None)
     details = request.GET.get('details', None)
@@ -530,6 +532,7 @@ def get_subtable(request):
     rel_type_entities = [] #f: foreignkey, m: manytomany, n: is not a relationship
     for i in range(0,num_entities):
         rel_type_entities.append("n")
+
     #Check if entity1 is foreignkey or manytomany field in the table Activity
     act_fields = [field for field in Activity._meta.get_fields()]
     # print("\nCheck act_fields\n")
@@ -599,8 +602,18 @@ def get_subtable(request):
             fields=[]
             for i in range (1,num_entities):
                 if(rel_type_entities[i]=="m"):
+                    # print(entity_models[i].__name__)
+                    #You can add any specific field of a table here like the table Location
                     if entity_models[i].__name__!="People":
-                        if entity_models[i].__name__!="People":
+                        if entity_models[i].__name__=="Location":
+                            fields.append("locations__address")
+                            fields.append("locations__neighborhood")
+                            fields.append("locations__city")
+                            fields.append("locations__county")
+                            fields.append("locations__region")
+                            fields.append("locations__state")
+                            fields.append("locations__country")
+                        elif entity_models[i].__name__ =="PopulationServed":
                             fields.append("populations_served__name")
                         else:
                             fields.append(entities[i].lower() + "s__name")
